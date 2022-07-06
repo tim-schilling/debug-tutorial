@@ -1,0 +1,6 @@
+pip-tools
+django-debug-toolbar
+django-environ
+martor
+whitenoise
+pre-commit
