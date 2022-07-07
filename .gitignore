@@ -1,3 +1,7 @@
+# Django static and media directories
+staticfiles/
+media/
+
 # PyCharm project files
 .idea/
 

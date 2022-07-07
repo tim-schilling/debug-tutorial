@@ -14,6 +14,7 @@ import os
 from pathlib import Path
 
 import environ
+from django.urls import reverse_lazy
 
 env = environ.Env(
     # set casting, default value
@@ -43,6 +44,8 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     # Third-party apps
     "martor",
+    # Project apps
+    "project.newsletter.apps.NewsletterAppConfig",
 ]
 
 MIDDLEWARE = [
@@ -137,7 +140,13 @@ SESSION_COOKIE_SECURE = True
 SECURE_SSL_REDIRECT = False
 
 
+# File and Data upload settings
+DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
+FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
+
 # Martor / Markdown editor
 
 # Choices are: "semantic", "bootstrap"
 MARTOR_THEME = "semantic"
+MARTOR_UPLOAD_PATH = "images/uploads/"
+MARTOR_UPLOAD_URL = reverse_lazy("newsletter:markdown_uploader")
