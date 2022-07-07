@@ -41,6 +41,7 @@ INSTALLED_APPS = [
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
+    # Third-party apps
     "martor",
 ]
 
@@ -55,7 +56,7 @@ MIDDLEWARE = [
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
 
-ROOT_URLCONF = "newsletter.config.urls"
+ROOT_URLCONF = "project.config.urls"
 
 TEMPLATES = [
     {
@@ -73,7 +74,7 @@ TEMPLATES = [
     },
 ]
 
-ASGI_APPLICATION = "newsletter.config.asgi.application"
+ASGI_APPLICATION = "project.config.asgi.application"
 
 
 # Database
