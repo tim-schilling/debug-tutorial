@@ -6,6 +6,13 @@
 
 {% block content %}
 <div class="ui main text container">
+  <div class="ui breadcrumb">
+    <a href="{% url "newsletter:landing" %}" class="section">Home</a>
+    <div class="divider"> / </div>
+    <a href="{% url "newsletter:list_posts" %}" class="section">Posts</a>
+    <div class="divider"> / </div>
+    <div class="active section">{{ post.title }}</div>
+  </div>
   <p>
     Posted {{ post.publish_date|naturaltime }}
   </p>

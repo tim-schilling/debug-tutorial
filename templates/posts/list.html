@@ -1,13 +1,22 @@
 {% extends "base.html" %}
 {% load humanize %}
 {% load martortags %}
+{% load newsletter_utils %}
 
 {% block content %}
 
   <div class="ui vertical stripe segment">
     <div class="ui text container">
-      {% for post in posts %}
+      <div class="ui pagination menu">
+        {% for index in page_range %}
+          <a class="item {% if index|is_ellipsis %}disabled{% elif index == page.number %}active{% endif %}"
+             href="{% if index|is_ellipsis %}#{% else %}?page={{ index }}{% endif %}"
+          >{{ index }}</a>
+        {% endfor %}
+      </div>
+      {% for post in page %}
         <h3 class="ui header">{{ post.title }}</h3>
+        <h5>{{ post.publish_date|date:"SHORT_DATETIME_FORMAT" }}</h5>
         <p>{{ post.summary|safe_markdown }}</p>
         <a href="{{ post.get_absolute_url }}" class="ui large button">Read More</a>
         {% if not forloop.last %}

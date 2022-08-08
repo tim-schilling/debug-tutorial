@@ -2,6 +2,7 @@ from typing import Optional
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models.functions import Coalesce
 from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from martor.models import MartorField
@@ -43,15 +44,21 @@ class Category(TimestampedModel):
 
 
 class PostQuerySet(models.QuerySet):
+    def recent_first(self):
+        """Order by so most recently published or created are first."""
+        return self.order_by(Coalesce("publish_at", "created").desc())
+
     def public(self):
+        """Limit to those that are published."""
         return self.filter(is_public=True)
 
     def published(self):
+        """Limit to those that are published."""
         return self.filter(is_published=True)
 
     def in_relevant_categories(self, subscription):
         """
-        Limit the posts to the categories for the subscription
+        Limit to the categories for the subscription
 
         :param subscription: The Subscription instance.
         :return: a Post QuerySet.
