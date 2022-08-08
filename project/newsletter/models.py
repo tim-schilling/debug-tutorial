@@ -1,5 +1,8 @@
+from typing import Optional
+
 from django.contrib.auth.models import User
 from django.db import models
+from django.urls import reverse
 from django.utils.translation import gettext_lazy as _
 from martor.models import MartorField
 
@@ -12,6 +15,7 @@ class TimestampedModel(models.Model):
 
     class Meta:
         abstract = True
+        ordering = ["-created"]
 
 
 class Category(TimestampedModel):
@@ -29,12 +33,30 @@ class Category(TimestampedModel):
         constraints = [
             models.UniqueConstraint(fields=("slug",), name="category_unq_slug"),
         ]
+        ordering = ["title"]
 
     def __str__(self):
         return self.title
 
     def __repr__(self):
         return f"<Category title={self.title} slug={self.slug} created={self.created} updated={self.updated}>"
+
+
+class PostQuerySet(models.QuerySet):
+    def public(self):
+        return self.filter(is_public=True)
+
+    def published(self):
+        return self.filter(is_published=True)
+
+    def in_relevant_categories(self, subscription):
+        """
+        Limit the posts to the categories for the subscription
+
+        :param subscription: The Subscription instance.
+        :return: a Post QuerySet.
+        """
+        return self.filter(categories__subscriptions=subscription).distinct()
 
 
 class Post(TimestampedModel):
@@ -48,7 +70,9 @@ class Post(TimestampedModel):
     )
     author = models.ForeignKey(User, related_name="posts", on_delete=models.PROTECT)
     content = MartorField()
+    summary = MartorField()
     categories = models.ManyToManyField(Category, blank=True)
+    is_public = models.BooleanField(default=True)
     is_published = models.BooleanField(default=False)
     publish_at = models.DateTimeField(
         null=True,
@@ -57,6 +81,7 @@ class Post(TimestampedModel):
             "If set and Is Published is True, the post will be available after the given value."
         ),
     )
+    objects = models.Manager.from_queryset(PostQuerySet)()
 
     class Meta:
         constraints = [
@@ -69,6 +94,23 @@ class Post(TimestampedModel):
     def __repr__(self):
         return f"<Post title={self.title} slug={self.slug} is_published={self.is_published} created={self.created} updated={self.updated}>"
 
+    @property
+    def publish_date(self):
+        return self.publish_at or self.created
+
+    def get_absolute_url(self):
+        return reverse("newsletter:view_post", kwargs={"slug": self.slug})
+
+
+class SubscriptionQuerySet(models.QuerySet):
+    def for_user(self, user) -> Optional["Subscription"]:
+        """
+        Fetch the subscription for the user if it exists.
+        :param user: The User instance.
+        :return: The subscription instance if it exists.
+        """
+        return self.filter(user=user).first()
+
 
 class Subscription(TimestampedModel):
     """A user's subscriptions to be notified of content of specific categories."""
@@ -76,7 +118,15 @@ class Subscription(TimestampedModel):
     user = models.OneToOneField(
         User, related_name="subscription", on_delete=models.CASCADE
     )
-    categories = models.ManyToManyField(Category, blank=True)
+    categories = models.ManyToManyField(
+        Category,
+        related_name="subscriptions",
+        blank=True,
+        help_text=_(
+            "An email will be sent when post matching one of these categories is published."
+        ),
+    )
+    objects = models.Manager.from_queryset(SubscriptionQuerySet)()
 
     def __repr__(self):
         return f"<Subscription id={self.id} user={self.user_id} created={self.created} updated={self.updated}>"

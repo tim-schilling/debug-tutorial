@@ -2,13 +2,74 @@ import os
 import uuid
 
 from django.conf import settings
+from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
+from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.http import HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
 from martor.utils import LazyEncoder
+
+from project.newsletter.forms import SubscriptionForm
+from project.newsletter.models import Post, Subscription
+
+
+@require_http_methods(["GET"])
+def landing(request):
+    """
+    The landing page view.
+
+    Render the public posts or the most recent posts an authenticated
+    user is subscribed for.
+    """
+    posts = Post.objects.published().public()
+    if request.user.is_authenticated and (
+        subscription := Subscription.objects.for_user(request.user)
+    ):
+        posts = posts.in_relevant_categories(subscription)
+    return render(request, "landing.html", {"posts": posts[:3]})
+
+
+@require_http_methods(["GET"])
+def list_posts(request):
+    """
+    The post lists view.
+    """
+    posts = Post.objects.published()
+    if not request.user.is_authenticated:
+        posts = posts.public()
+    return render(request, "posts/list.html", {"posts": posts})
+
+
+@require_http_methods(["GET"])
+def view_post(request, slug):
+    """
+    The post detail view.
+    """
+    posts = Post.objects.published()
+    if not request.user.is_authenticated:
+        posts = posts.public()
+    post = get_object_or_404(posts, slug=slug)
+    return render(request, "posts/detail.html", {"post": post})
+
+
+@require_http_methods(["GET", "POST"])
+@login_required
+def update_subscription(request):
+    instance = Subscription.objects.filter(user=request.user).first()
+    form = SubscriptionForm(instance=instance)
+    if request.method == "POST":
+        form = SubscriptionForm(request.POST, instance=instance)
+        if form.is_valid():
+            if not instance:
+                form.instance.user = request.user
+            form.save()
+            messages.success(request, "Your subscription changes have been saved.")
+            return redirect("newsletter:list_posts")
+    return render(request, "subscription/update.html", {"form": form})
 
 
 @staff_member_required

@@ -1,0 +1,31 @@
+{% if form.non_field_errors %}
+  <div class="ui error message">
+    <div class="header">We had some issues</div>
+    <ul class="list">
+      {% for error in form.non_field_errors %}
+      <li>{{ error|escape }}</li>
+      {% endfor %}
+    </ul>
+  </div>
+{% endif %}
+
+{% for field in form %}
+  <div class="field {% if field.errors %}error{% endif %}">
+    {{ field.label_tag }}
+    {{ field }}
+    {% if field.help_text %}
+    <p class="help">{{ field.help_text|safe }}</p>
+    {% endif %}
+  </div>
+
+  {% if field.errors %}
+    <div class="ui error message">
+      <div class="header">We had some issues</div>
+      <ul class="list">
+        {% for error in field.errors %}
+        <li>{{ error|escape }}</li>
+        {% endfor %}
+      </ul>
+    </div>
+  {% endif %}
+{% endfor %}

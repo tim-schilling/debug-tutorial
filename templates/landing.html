@@ -1,0 +1,52 @@
+{% extends "base.html" %}
+{% load martortags %}
+
+{% block content %}
+
+  <div class="ui inverted vertical center aligned segment" style="min-height: 500px; padding: 1em 0;">
+
+    <div class="ui text container">
+      <h1 class="ui inverted header" style="margin-top: 1em;margin-bottom: 0em;font-size: 4em;font-weight: normal;">
+        Tim's Newsletter
+      </h1>
+      <h2>All of my thoughts, none of the social media</h2>
+      <div class="ui huge primary button">Subscribe <i class="right arrow icon"></i></div>
+    </div>
+
+  </div>
+
+  <div class="ui vertical stripe segment" style="margin-top: 1em;">
+    <div class="ui equal width stackable internally celled grid">
+      <div class="center aligned row">
+        <div class="column">
+          <h3>Subscribe to the content you care about</h3>
+          <p>
+            We all have different interests. You can subscribe
+            to our overlapping areas and not worry about the others.
+          </p>
+        </div>
+        <div class="column">
+          <h3>Limit how often you're told</h3>
+          <p>
+            I'm not here to spam you, but if it's too much you can reduce how often
+            you're notified.
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="ui vertical stripe segment">
+    <div class="ui text container">
+      {% for post in posts %}
+        <h3 class="ui header">{{ post.title }}</h3>
+        <p>{{ post.summary|safe_markdown }}</p>
+        <a href="{{ post.get_absolute_url }}" class="ui large button">Read More</a>
+        {% if not forloop.last %}
+          <div class="ui section divider"></div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+{% endblock %}

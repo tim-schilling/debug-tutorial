@@ -1,0 +1,13 @@
+{% extends "base.html" %}
+
+
+{% block title %}Subscription | {{ block.super }}{% endblock %}
+
+{% block content %}
+  <form class="ui form {% if form.errors %}error{% endif %}" method="post" action="">
+
+    {% csrf_token %}
+    {{ form.as_p }}
+    <input class="ui button" type="submit" value="Save" />
+  </form>
+{% endblock %}

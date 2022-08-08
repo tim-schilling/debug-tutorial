@@ -1,6 +1,9 @@
 pip-tools
 django-debug-toolbar
 django-environ
+django-registration-redux
 martor
 whitenoise
 pre-commit
+faker
+mdgen

@@ -1,0 +1,20 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load martortags %}
+
+{% block content %}
+
+  <div class="ui vertical stripe segment">
+    <div class="ui text container">
+      {% for post in posts %}
+        <h3 class="ui header">{{ post.title }}</h3>
+        <p>{{ post.summary|safe_markdown }}</p>
+        <a href="{{ post.get_absolute_url }}" class="ui large button">Read More</a>
+        {% if not forloop.last %}
+          <div class="ui section divider"></div>
+        {% endif %}
+      {% endfor %}
+    </div>
+  </div>
+
+{% endblock %}

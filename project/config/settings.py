@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.0/ref/settings/
 """
 
 import os
+import socket
 from pathlib import Path
 
 import environ
@@ -39,6 +40,8 @@ INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
+    "django.forms",
+    "django.contrib.humanize",
     "django.contrib.sessions",
     "django.contrib.messages",
     "django.contrib.staticfiles",
@@ -46,6 +49,7 @@ INSTALLED_APPS = [
     "martor",
     # Project apps
     "project.newsletter.apps.NewsletterAppConfig",
+    "project.data.apps.DataAppConfig",
 ]
 
 MIDDLEWARE = [
@@ -60,6 +64,8 @@ MIDDLEWARE = [
 ]
 
 ROOT_URLCONF = "project.config.urls"
+
+FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 
 TEMPLATES = [
     {
@@ -126,7 +132,10 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.0/howto/static-files/
 
 STATIC_URL = "static/"
-STATIC_ROOT = BASE_DIR / "staticfiles"
+STATICFILES_DIRS = [
+    BASE_DIR / "static",
+]
+STATIC_ROOT = BASE_DIR / "static-files"
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = BASE_DIR / "media"
@@ -150,3 +159,18 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 MARTOR_THEME = "semantic"
 MARTOR_UPLOAD_PATH = "images/uploads/"
 MARTOR_UPLOAD_URL = reverse_lazy("newsletter:markdown_uploader")
+
+MARTOR_ALTERNATIVE_SEMANTIC_JS_FILE = "dist/fomantic-ui-2.8.8.semantic.min.js"
+MARTOR_ALTERNATIVE_SEMANTIC_CSS_FILE = "dist/fomantic-ui-2.8.8.semantic.min.css"
+MARTOR_ALTERNATIVE_JQUERY_JS_FILE = "dist/jquery.min.js"
+
+
+if DEBUG:
+    # Debug Toolbar settings
+    INSTALLED_APPS += ["debug_toolbar"]
+    MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
+    hostname, _, ips = socket.gethostbyname_ex(socket.gethostname())
+    INTERNAL_IPS = [ip[: ip.rfind(".")] + ".1" for ip in ips] + [
+        "127.0.0.1",
+        "10.0.2.2",
+    ]
