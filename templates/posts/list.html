@@ -7,6 +7,11 @@
 
   <div class="ui vertical stripe segment">
     <div class="ui text container">
+      <div class="ui breadcrumb">
+        <a href="{% url "newsletter:landing" %}" class="section">Home</a>
+        <div class="divider"> / </div>
+        <div class="active section">Posts</div>
+      </div>
       <div class="ui pagination menu">
         {% for index in page_range %}
           <a class="item {% if index|is_ellipsis %}disabled{% elif index == page.number %}active{% endif %}"

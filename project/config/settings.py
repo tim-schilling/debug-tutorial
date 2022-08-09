@@ -40,6 +40,7 @@ INSTALLED_APPS = [
     "django.contrib.admin",
     "django.contrib.auth",
     "django.contrib.contenttypes",
+    "django.contrib.sites",
     "django.forms",
     "django.contrib.humanize",
     "django.contrib.sessions",
@@ -84,6 +85,8 @@ TEMPLATES = [
 ]
 
 ASGI_APPLICATION = "project.config.asgi.application"
+
+SITE_ID = 1
 
 
 # Database

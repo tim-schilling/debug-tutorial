@@ -56,6 +56,10 @@ class PostQuerySet(models.QuerySet):
         """Limit to those that are published."""
         return self.filter(is_published=True)
 
+    def in_category(self, category: Category):
+        """Limit to the given category"""
+        return self.filter(categories=category)
+
     def in_relevant_categories(self, subscription):
         """
         Limit to the categories for the subscription
