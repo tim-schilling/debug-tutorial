@@ -21,6 +21,9 @@
           <a href="{% url "auth_login" %}" class="header item">Login</a>
         {% else %}
           <a href="{% url "newsletter:update_subscription" %}" class="header item">Settings</a>
+          {% if request.user.is_staff %}
+            <a href="{% url "newsletter:analytics" %}" class="header item">Analytics</a>
+          {% endif %}
         {% endif %}
         <div class="right menu">
           <a class="item" href="https://github.com/tim-schilling/newsletter" target="_blank">

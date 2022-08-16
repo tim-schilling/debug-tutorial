@@ -1,0 +1,42 @@
+{% extends "base.html" %}
+{% load humanize %}
+{% load martortags %}
+{% load newsletter_utils %}
+
+{% block content %}
+
+  <div class="ui vertical stripe segment">
+    <div class="ui text container">
+      <div class="ui breadcrumb">
+        <a href="{% url "newsletter:landing" %}" class="section">Home</a>
+        <div class="divider"> / </div>
+        <div class="active section">Analytics</div>
+      </div>
+
+      <h3 class="ui header">Subscriber Analytics</h3>
+      <table class="ui celled table">
+        <thead>
+        <tr>
+          <th>Metric</th>
+          <th>Value</th>
+        </tr>
+        </thead>
+        <tbody>
+        {% for metric, value in aggregates.items %}
+        <tr>
+          <td>{{ metric }}</td>
+          <td>{{ value }}</td>
+        </tr>
+        {% endfor %}
+        {% for category, value in category_aggregates.items %}
+        <tr>
+          <td>{{ category }} subscriptions</td>
+          <td>{{ value }}</td>
+        </tr>
+        {% endfor %}
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+{% endblock %}

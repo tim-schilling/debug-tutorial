@@ -7,6 +7,7 @@ urlpatterns = [
     path("markdown/uploader/", views.markdown_uploader, name="markdown_uploader"),
     path("", views.landing, name="landing"),
     path("account/", views.update_subscription, name="update_subscription"),
+    path("analytics/", views.analytics, name="analytics"),
     path(
         "p/",
         include(

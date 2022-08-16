@@ -1,5 +1,6 @@
 import os
 import uuid
+from datetime import timedelta
 
 from django.conf import settings
 from django.contrib import messages
@@ -8,14 +9,16 @@ from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.paginator import Paginator
+from django.db.models import Count, Q
 from django.http import HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
 from martor.utils import LazyEncoder
 
 from project.newsletter.forms import SubscriptionForm
-from project.newsletter.models import Post, Subscription
+from project.newsletter.models import Category, Post, Subscription
 
 
 @require_http_methods(["GET"])
@@ -77,6 +80,49 @@ def update_subscription(request):
             messages.success(request, "Your subscription changes have been saved.")
             return redirect("newsletter:list_posts")
     return render(request, "subscription/update.html", {"form": form})
+
+
+@staff_member_required
+@require_http_methods(["GET"])
+def analytics(request):
+    """
+    The post detail view.
+    """
+    now = timezone.now()
+    aggregates = Subscription.objects.all().aggregate(
+        subscribed_users=Count("user", distinct=True),
+        subscriptions_30_days=Count(
+            "id",
+            filter=Q(categories__isnull=False, created__gte=now - timedelta(days=30)),
+        ),
+        subscriptions_90_days=Count(
+            "id",
+            filter=Q(categories__isnull=False, created__gte=now - timedelta(days=90)),
+        ),
+        subscriptions_180_days=Count(
+            "id",
+            filter=Q(categories__isnull=False, created__gte=now - timedelta(days=180)),
+        ),
+    )
+    category_aggregates = dict(
+        Category.objects.annotate(count=Count("subscriptions"))
+        .order_by("title")
+        .values_list("title", "count")
+    )
+
+    return render(
+        request,
+        "staff/analytics.html",
+        {
+            "aggregates": {
+                "Subscribed users": aggregates["subscribed_users"],
+                "Subscriptions (30 days)": aggregates["subscriptions_30_days"],
+                "Subscriptions (90 days)": aggregates["subscriptions_90_days"],
+                "Subscriptions (180 days)": aggregates["subscriptions_180_days"],
+            },
+            "category_aggregates": category_aggregates,
+        },
+    )
 
 
 @staff_member_required
