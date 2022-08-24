@@ -1,4 +1,5 @@
 pip-tools
+django-anymail
 django-debug-toolbar
 django-environ
 django-registration-redux

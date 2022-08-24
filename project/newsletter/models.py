@@ -4,6 +4,7 @@ from django.contrib.auth.models import User
 from django.db import models
 from django.db.models.functions import Coalesce
 from django.urls import reverse
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from martor.models import MartorField
 
@@ -56,6 +57,15 @@ class PostQuerySet(models.QuerySet):
         """Limit to those that are published."""
         return self.filter(is_published=True)
 
+    def needs_publishing(self, now=None):
+        """Limit to those that aren't published, but are scheduled to be."""
+        now = now or timezone.now()
+        return self.filter(is_published=False, publish_at__lte=now)
+
+    def needs_notifications_sent(self):
+        """Limit to those that have yet to send out notifications to their subscribers."""
+        return self.filter(notifications_sent__isnull=True)
+
     def in_category(self, category: Category):
         """Limit to the given category"""
         return self.filter(categories=category)
@@ -82,7 +92,7 @@ class Post(TimestampedModel):
     author = models.ForeignKey(User, related_name="posts", on_delete=models.PROTECT)
     content = MartorField()
     summary = MartorField()
-    categories = models.ManyToManyField(Category, blank=True)
+    categories = models.ManyToManyField(Category, related_name="posts", blank=True)
     is_public = models.BooleanField(default=True)
     is_published = models.BooleanField(default=False)
     publish_at = models.DateTimeField(
@@ -90,6 +100,13 @@ class Post(TimestampedModel):
         blank=True,
         help_text=_(
             "If set and Is Published is True, the post will be available after the given value."
+        ),
+    )
+    notifications_sent = models.DateTimeField(
+        null=True,
+        blank=True,
+        help_text=_(
+            "If set, all notifications are considered to have been sent and will not be sent again."
         ),
     )
     objects = models.Manager.from_queryset(PostQuerySet)()
@@ -114,13 +131,27 @@ class Post(TimestampedModel):
 
 
 class SubscriptionQuerySet(models.QuerySet):
-    def for_user(self, user) -> Optional["Subscription"]:
+    def for_user(self, user: User) -> Optional["Subscription"]:
         """
         Fetch the subscription for the user if it exists.
         :param user: The User instance.
         :return: The subscription instance if it exists.
         """
         return self.filter(user=user).first()
+
+    def needs_notifications_sent(self, post: Post):
+        """
+        Limit to those that need to send notifications for the post.
+
+        :param post: The Post instance.
+        :return: a Subscription QuerySet.
+        """
+        return self.filter(
+            models.Q(notifications__post=post, notifications__sent__isnull=True)
+            | models.Q(notifications__post__isnull=True),
+            categories__posts=post,
+            user__date_joined__lte=post.publish_date,
+        )
 
 
 class Subscription(TimestampedModel):
@@ -150,6 +181,13 @@ class SubscriptionNotification(TimestampedModel):
     When a post is published, any subscribers to the categories of the post
     should be notified of the post.
     """
+
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["post", "subscription"], name="subscript_notif_uniq"
+            )
+        ]
 
     subscription = models.ForeignKey(
         Subscription, related_name="notifications", on_delete=models.CASCADE

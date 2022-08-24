@@ -22,8 +22,11 @@ distlib==0.3.4
     # via virtualenv
 django==4.0.5
     # via
+    #   django-anymail
     #   django-debug-toolbar
     #   martor
+django-anymail==8.6
+    # via -r requirements.in
 django-debug-toolbar==3.5.0
     # via -r requirements.in
 django-environ==0.9.0
@@ -65,7 +68,9 @@ python-dateutil==2.8.2
 pyyaml==6.0
     # via pre-commit
 requests==2.28.1
-    # via martor
+    # via
+    #   django-anymail
+    #   martor
 six==1.16.0
     # via
     #   python-dateutil

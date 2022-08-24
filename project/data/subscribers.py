@@ -25,6 +25,11 @@ def generate_data(categories: CategoryData):
                 f"{user.first_name}.{user.last_name}.{fake.pyint(max_value=999)}"
             )
             user.email = f"{user.username}@example.com"
+            user.date_joined = fake.date_time_between_dates(
+                datetime_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
+                datetime_end=datetime(2022, 10, 12, tzinfo=timezone.utc),
+                tzinfo=timezone.utc,
+            )
             users.append(user)
         User.objects.bulk_create(users, ignore_conflicts=True)
     user_ids = (

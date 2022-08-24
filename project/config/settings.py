@@ -47,6 +47,7 @@ INSTALLED_APPS = [
     "django.contrib.messages",
     "django.contrib.staticfiles",
     # Third-party apps
+    "anymail",
     "martor",
     # Project apps
     "project.newsletter.apps.NewsletterAppConfig",
@@ -155,6 +156,9 @@ SECURE_SSL_REDIRECT = False
 # File and Data upload settings
 DATA_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
+
+# Email settings
+EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # Martor / Markdown editor
 

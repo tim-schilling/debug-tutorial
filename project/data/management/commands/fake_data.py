@@ -3,7 +3,13 @@ from contextlib import contextmanager
 
 from django.core.management.base import BaseCommand
 
-from project.data import author, category, markdown, subscribers
+from project.data import (
+    author,
+    category,
+    markdown,
+    subscribers,
+    subscription_notifications,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -30,3 +36,6 @@ class Command(BaseCommand):
             )
         with log("Subscribers"):
             subscribers.generate_data(categories)
+
+        with log("Subscription Notifications"):
+            subscription_notifications.generate_data()
