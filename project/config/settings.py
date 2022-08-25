@@ -172,6 +172,9 @@ MARTOR_ALTERNATIVE_SEMANTIC_CSS_FILE = "dist/fomantic-ui-2.8.8.semantic.min.css"
 MARTOR_ALTERNATIVE_JQUERY_JS_FILE = "dist/jquery.min.js"
 
 
+# Test settings
+TEST_RUNNER = "project.tests.runner.ProjectTestRunner"
+
 if DEBUG:
     # Debug Toolbar settings
     INSTALLED_APPS += ["debug_toolbar"]
