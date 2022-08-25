@@ -1,5 +1,4 @@
 from django.contrib import admin
-from django.contrib.auth.models import User
 
 from project.newsletter.models import (
     Category,
@@ -33,14 +32,12 @@ class PostAdmin(admin.ModelAdmin):
 
     @admin.decorators.display(description="Categories")
     def categories_list(self, obj):
-        return ", ".join(category.title for category in obj.categories.all())
+        return ", ".join(
+            category.title for category in obj.categories.order_by("title")
+        )
 
     def get_changeform_initial_data(self, request):
-        try:
-            super_user = User.objects.get(is_superuser=True)
-        except (User.DoesNotExist, User.MultipleObjectsReturned):
-            super_user = None
-        return {"author": super_user}
+        return {"author": request.user}
 
 
 @admin.register(Subscription)
