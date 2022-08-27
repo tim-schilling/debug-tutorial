@@ -13,17 +13,23 @@ class TestSendNotifications(TestCase):
     def setUp(self) -> None:
         self.command = Command()
 
-    def iterate_subscription_notifications(self):
+    def test_iterate_subscription_notifications(self):
         category = Category.objects.create(title="Cat", slug="cat")
         author = User.objects.create(username="author")
         subscription1 = Subscription.objects.create(
-            user=User.objects.create(username="subscriber1")
+            user=User.objects.create(
+                username="subscriber1", email="subscriber1@example.com"
+            )
         )
         subscription2 = Subscription.objects.create(
             user=User.objects.create(username="subscriber2")
         )
+        subscription3 = Subscription.objects.create(
+            user=User.objects.create(username="subscriber3")
+        )
         subscription1.categories.set([category])
         subscription2.categories.set([category])
+        subscription3.categories.set([category])
 
         post = Post.objects.create(
             author=author,
@@ -42,6 +48,7 @@ class TestSendNotifications(TestCase):
         )
         post.refresh_from_db()
         self.assertIsNotNone(post.notifications_sent)
+        self.assertEqual(subscription3.notifications.count(), 1)
 
     @patch("project.newsletter.management.commands.send_notifications.send_mail")
     def test_email(self, send_mail):

@@ -4,7 +4,6 @@ from django.contrib.sites.shortcuts import get_current_site
 from django.core.mail import send_mail
 from django.core.management.base import BaseCommand
 from django.db import transaction
-from django.db.models import F
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 
@@ -39,47 +38,46 @@ class Command(BaseCommand):
             .select_related("author")
             .select_for_update(of=("id", "notifications_sent", "updated"))
         )
-        for post in posts:
-            subscriptions = Subscription.objects.needs_notifications_sent(post)
-            for subscription in subscriptions:
-                notification, _ = SubscriptionNotification.objects.get_or_create(
-                    subscription=subscription,
-                    post=post,
+        with transaction.atomic():
+            for post in posts:
+                subscriptions = Subscription.objects.needs_notifications_sent(post)
+                # Create all notifications so we can safely iterate
+                # on sent=False using select_for_update
+                SubscriptionNotification.objects.bulk_create(
+                    [
+                        SubscriptionNotification(subscription=subscription, post=post)
+                        for subscription in subscriptions
+                    ],
+                    ignore_conflicts=True,
+                    batch_size=500,
                 )
-                if notification.sent:
-                    continue
-                yield post, notification
-            post.notifications_sent = post.updated = timezone.now()
-            post.save(update_fields=["notifications_sent", "updated"])
+                notifications = (
+                    SubscriptionNotification.objects.needs_notifications_sent_for_post(
+                        post
+                    )
+                    .annotate_email()
+                    .select_for_update(of=("id", "sent", "updated"))
+                )
+                for notification in notifications:
+                    if notification.email:
+                        yield post, notification
+                    notification.sent = notification.updated = timezone.now()
+                    notification.save(update_fields=["sent", "updated"])
+                post.notifications_sent = post.updated = timezone.now()
+                post.save(update_fields=["notifications_sent", "updated"])
 
     def handle(self, *args, **options):
         Post.objects.needs_publishing().update(
             is_published=True, updated=timezone.now()
         )
-
         for post, notification in self.iterate_subscription_notifications():
-            with transaction.atomic():
-                # Reselect the notification in a transaction block to prevent
-                # multiple processes from sending a notification at once.
-                notification = (
-                    SubscriptionNotification.objects.annotate(
-                        email=F("subscription__user__email")
-                    )
-                    .select_for_update(of=("id", "sent", "updated"))
-                    .get(id=notification.id)
-                )
-
-                subject = SUBJECT.format(
-                    name=post.author.get_full_name(), title=post.title
-                )
-                message = MESSAGE.format(
-                    url=f"https://{get_current_site(None).domain}{post.get_absolute_url()}"
-                )
-                send_mail(
-                    subject,
-                    message,
-                    from_email=None,
-                    recipient_list=[notification.email],
-                )
-                notification.sent = notification.updated = timezone.now()
-                notification.save(update_fields=["sent", "updated"])
+            subject = SUBJECT.format(name=post.author.get_full_name(), title=post.title)
+            message = MESSAGE.format(
+                url=f"https://{get_current_site(None).domain}{post.get_absolute_url()}"
+            )
+            send_mail(
+                subject,
+                message,
+                from_email=None,
+                recipient_list=[notification.email],
+            )
