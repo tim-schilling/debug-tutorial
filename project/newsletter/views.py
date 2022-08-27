@@ -20,6 +20,8 @@ from martor.utils import LazyEncoder
 from project.newsletter.forms import SubscriptionForm
 from project.newsletter.models import Category, Post, Subscription
 
+LIST_POSTS_PAGE_SIZE = 100
+
 
 @require_http_methods(["GET"])
 def landing(request):
@@ -29,11 +31,13 @@ def landing(request):
     Render the public posts or the most recent posts an authenticated
     user is subscribed for.
     """
-    posts = Post.objects.recent_first().published().public()
+    posts = Post.objects.recent_first().published()
     if request.user.is_authenticated and (
         subscription := Subscription.objects.for_user(request.user)
     ):
         posts = posts.in_relevant_categories(subscription)
+    else:
+        posts = posts.public()
     return render(request, "landing.html", {"posts": posts[:3]})
 
 
@@ -45,7 +49,7 @@ def list_posts(request):
     posts = Post.objects.recent_first().published()
     if not request.user.is_authenticated:
         posts = posts.public()
-    paginator = Paginator(posts, 100)
+    paginator = Paginator(posts, LIST_POSTS_PAGE_SIZE)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)
     page_range = paginator.get_elided_page_range(page_obj.number)
@@ -67,7 +71,7 @@ def view_post(request, slug):
 
 
 @require_http_methods(["GET", "POST"])
-@login_required
+@login_required()
 def update_subscription(request):
     instance = Subscription.objects.filter(user=request.user).first()
     form = SubscriptionForm(instance=instance)
@@ -90,18 +94,23 @@ def analytics(request):
     """
     now = timezone.now()
     aggregates = Subscription.objects.all().aggregate(
-        subscribed_users=Count("user", distinct=True),
+        subscribed_users=Count(
+            "user", distinct=True, filter=Q(categories__isnull=False)
+        ),
         subscriptions_30_days=Count(
             "id",
             filter=Q(categories__isnull=False, created__gte=now - timedelta(days=30)),
+            distinct=True,
         ),
         subscriptions_90_days=Count(
             "id",
             filter=Q(categories__isnull=False, created__gte=now - timedelta(days=90)),
+            distinct=True,
         ),
         subscriptions_180_days=Count(
             "id",
             filter=Q(categories__isnull=False, created__gte=now - timedelta(days=180)),
+            distinct=True,
         ),
     )
     category_aggregates = dict(

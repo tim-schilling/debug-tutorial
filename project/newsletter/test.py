@@ -1,7 +1,7 @@
 from dataclasses import dataclass
 
 from django.contrib.auth.models import User
-from django.test import RequestFactory, TestCase
+from django.test import Client, RequestFactory, TestCase
 from django.utils import timezone
 
 from project.newsletter.models import Category, Post, Subscription
@@ -95,3 +95,4 @@ class DataTestCase(TestCase):
             first_name="Admin",
             last_name="User",
         )
+        self.client = Client()

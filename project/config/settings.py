@@ -160,6 +160,9 @@ FILE_UPLOAD_MAX_MEMORY_SIZE = 5242880  # 5MB
 # Email settings
 EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
+# Login URL setting
+LOGIN_URL = reverse_lazy("auth_login")
+
 # Martor / Markdown editor
 
 # Choices are: "semantic", "bootstrap"
