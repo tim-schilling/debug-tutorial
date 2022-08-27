@@ -14,6 +14,7 @@ class TestCategory(DataTestCase):
 
 class TestPost(DataTestCase):
     def setUp(self) -> None:
+        super().setUp()
         self.post = Post.objects.create(
             author=self.data.author,
             slug="test-post",

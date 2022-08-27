@@ -8,9 +8,6 @@ class RecentPostsFeed(Feed):
     title = "Newsletter posts"
     description = "Categorized newsletter posts from Tim."
 
-    def link(self, obj):
-        return reverse("newsletter:list_posts")
-
     def items(self):
         return (
             Post.objects.recent_first()
@@ -39,12 +36,6 @@ class RecentPostsFeed(Feed):
         """
         return [category.title for category in item.categories.all()]
 
-    def item_link(self, item):
-        """
-        Takes an item, as returned by items(), and returns the item's URL.
-        """
-        return item.get_absolute_url()
-
 
 class RecentCategorizedPostsFeed(RecentPostsFeed):
     description = "Categorized newsletter posts from Tim."
@@ -52,10 +43,10 @@ class RecentCategorizedPostsFeed(RecentPostsFeed):
     def get_object(self, request, slug):
         return Category.objects.get(slug=slug)
 
-    def title(self, obj):
+    def item_title(self, obj):
         return f"{obj.title} newsletter posts"
 
-    def link(self, obj):
+    def item_link(self, obj):
         return reverse("newsletter:list_posts") + f"?category={obj.slug}"
 
     def items(self, obj):

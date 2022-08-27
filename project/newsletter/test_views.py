@@ -114,6 +114,7 @@ class TestViewPost(DataTestCase):
 
 class TestUpdateSubscription(DataTestCase):
     def setUp(self) -> None:
+        super().setUp()
         self.user = User.objects.create_user(username="update_subscription")
         self.subscription = Subscription.objects.create(user=self.user)
 

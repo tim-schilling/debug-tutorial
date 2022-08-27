@@ -21,8 +21,23 @@ class Command(BaseCommand):
     """Send notifications for posts that are published."""
 
     def iterate_subscription_notifications(self):
+        """
+        Iterate over subscriptions needing notifications per post.
+
+        Will create a SubscriptionNotification for each Post-Subscription
+        pair if it doesn't exist and yield the tuple when the notification
+        has not been sent.
+
+        The post will have its notifications_sent property set even if
+        there are no subscriptions for the post. This prevents notifications
+        from being sent for future subscribers to a given category when the
+        post already exists.
+        """
         posts = (
-            Post.objects.published().needs_notifications_sent().select_related("author")
+            Post.objects.published()
+            .needs_notifications_sent()
+            .select_related("author")
+            .select_for_update(of=("id", "notifications_sent", "updated"))
         )
         for post in posts:
             subscriptions = Subscription.objects.needs_notifications_sent(post)
