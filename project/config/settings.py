@@ -72,9 +72,10 @@ FORM_RENDERER = "django.forms.renderers.TemplatesSetting"
 TEMPLATES = [
     {
         "BACKEND": "django.template.backends.django.DjangoTemplates",
-        "DIRS": [os.path.join(BASE_DIR, "templates")],
+        "DIRS": [BASE_DIR / "project/templates"],
         "APP_DIRS": True,
         "OPTIONS": {
+            "debug": True,
             "context_processors": [
                 "django.template.context_processors.debug",
                 "django.template.context_processors.request",
@@ -178,7 +179,7 @@ MARTOR_ALTERNATIVE_JQUERY_JS_FILE = "dist/jquery.min.js"
 # Test settings
 TEST_RUNNER = "project.tests.runner.ProjectTestRunner"
 
-if DEBUG:
+if DEBUG:  # pragma: no cover
     # Debug Toolbar settings
     INSTALLED_APPS += ["debug_toolbar"]
     MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
