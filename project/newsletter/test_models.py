@@ -26,7 +26,7 @@ class TestPost(DataTestCase):
     def test_str(self):
         self.assertEqual(str(self.data.all_post), self.data.all_post.title)
 
-    def publish_date(self):
+    def test_publish_date(self):
         self.assertEqual(self.post.publish_date, self.post.created)
         self.post.publish_at = timezone.now()
         self.assertEqual(self.post.publish_date, self.post.publish_at)

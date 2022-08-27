@@ -1,6 +1,8 @@
 pip-tools
+coverage
 django-anymail
 django-debug-toolbar
+django_coverage_plugin
 django-environ
 django-registration-redux
 martor

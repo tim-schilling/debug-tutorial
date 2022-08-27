@@ -2,6 +2,7 @@ from typing import Optional
 
 from django.contrib.auth.models import User
 from django.db import models
+from django.db.models import F
 from django.db.models.functions import Coalesce
 from django.urls import reverse
 from django.utils import timezone
@@ -174,6 +175,25 @@ class Subscription(TimestampedModel):
         return f"<Subscription id={self.id} user={self.user_id} created={self.created} updated={self.updated}>"
 
 
+class SubscriptionNotificationQuerySet(models.QuerySet):
+    def needs_notifications_sent_for_post(self, post: Post):
+        """
+        Limit to those that need to send notifications for the post.
+
+        :param post: The Post instance.
+        :return: a SubscriptionNotification QuerySet.
+        """
+        return self.filter(post=post, sent__isnull=True)
+
+    def annotate_email(self):
+        """
+        Annotate the SubscriptionNotification QuerySet with the subscriber's email.
+
+        :return: a SubscriptionNotification QuerySet.
+        """
+        return self.annotate(email=F("subscription__user__email"))
+
+
 class SubscriptionNotification(TimestampedModel):
     """
     A log of notifications sent per post per subscription.
@@ -196,6 +216,7 @@ class SubscriptionNotification(TimestampedModel):
         Post, related_name="subscription_notifications", on_delete=models.CASCADE
     )
     sent = models.DateTimeField(null=True, blank=True)
+    objects = models.Manager.from_queryset(SubscriptionNotificationQuerySet)()
 
     def __repr__(self):
         return f"<SubscriptionNotification id={self.id} subscription={self.subscription_id} post={self.post_id} sent={self.sent} created={self.created} updated={self.updated}>"

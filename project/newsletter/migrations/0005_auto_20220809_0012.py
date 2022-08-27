@@ -3,7 +3,7 @@
 from django.db import migrations
 
 
-def create_site(apps, schema_editor):
+def create_site(apps, schema_editor):  # pragma: nocover
     Site = apps.get_model("sites", "Site")
     site = Site.objects.filter(domain="example.com").first()
     if site:
