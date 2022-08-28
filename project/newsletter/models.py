@@ -5,6 +5,7 @@ from django.core import validators
 from django.db import models
 from django.db.models import Exists, F, OuterRef
 from django.db.models.functions import Coalesce
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from martor.models import MartorField
@@ -159,7 +160,7 @@ class Post(TimestampedModel):
         return self.publish_at or self.created
 
     def get_absolute_url(self):
-        return f"/p/{self.slug}/"
+        return reverse("newsletter:view_post", kwargs={"lookup": self.slug})
 
 
 class SubscriptionQuerySet(models.QuerySet):
