@@ -9,16 +9,15 @@ from django.contrib.auth.decorators import login_required
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.paginator import Paginator
-from django.db.models import Case, F, Value, When
-from django.http import Http404
-from django.db.models import Count, Q
-from django.http import HttpResponse, JsonResponse
-from django.shortcuts import redirect, render, get_object_or_404
+from django.db.models import Case, Count, F, Q, Value, When
+from django.http import Http404, HttpResponse, JsonResponse
+from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
 from martor.utils import LazyEncoder
 
+from project.newsletter import operations
 from project.newsletter.forms import PostForm, SubscriptionForm
 from project.newsletter.models import Category, Post, Subscription
 
@@ -67,6 +66,27 @@ def list_posts(request):
     page_range = paginator.get_elided_page_range(page_obj.number)
     return render(
         request, "posts/list.html", {"page": page_obj, "page_range": page_range}
+    )
+
+
+@require_http_methods(["GET"])
+def view_post(request, lookup):
+    """
+    The post detail view.
+    """
+    posts = Post.objects.published().annotate_is_unread(request.user)
+    if not request.user.is_authenticated:
+        posts = posts.public()
+    post = posts.get(title=lookup)
+    if post.is_unread:
+        operations.mark_as_read(post, request.user)
+    return render(
+        request,
+        "posts/detail.html",
+        {
+            "post": post,
+            "open_graph_url": request.build_absolute_uri(post.get_absolute_url()),
+        },
     )
 
 
