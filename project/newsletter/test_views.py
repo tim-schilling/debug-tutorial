@@ -1,12 +1,14 @@
 from datetime import timedelta
+from io import BytesIO
 from unittest.mock import patch
 
 from django.conf import settings
 from django.contrib.auth.models import User
 from django.urls import reverse
 from django.utils import timezone
+from PIL import Image
 
-from project.newsletter.models import Subscription
+from project.newsletter.models import Post, Subscription
 from project.newsletter.test import DataTestCase
 
 
@@ -112,6 +114,135 @@ class TestViewPost(DataTestCase):
         self.assertEqual(response.context["post"], self.data.private_post)
 
 
+class TestUpdatePost(DataTestCase):
+    def test_staff_user_required(self):
+        user = User.objects.create_user(username="basic")
+        self.client.force_login(user)
+        url = reverse(
+            "newsletter:update_post", kwargs={"slug": self.data.private_post.slug}
+        )
+        response = self.client.post(url)
+        self.assertRedirects(response, f"{settings.LOGIN_URL}?next={url}")
+
+    def test_get(self):
+        self.client.force_login(self.user)
+        url = reverse(
+            "newsletter:update_post", kwargs={"slug": self.data.private_post.slug}
+        )
+        response = self.client.get(url)
+        self.assertTemplateUsed(response, "staff/post_form.html")
+
+    def test_invalid(self):
+        self.client.force_login(self.user)
+        url = reverse(
+            "newsletter:update_post", kwargs={"slug": self.data.private_post.slug}
+        )
+        response = self.client.post(url, data={})
+        self.assertTemplateUsed(response, "staff/post_form.html")
+        self.assertInHTML(
+            "<li>This field is required.</li>",
+            response.content.decode("utf-8"),
+        )
+
+    def test_update(self):
+        post = Post.objects.create(
+            author=self.data.author,
+            title="Test Update",
+            slug="test-update",
+            content="c",
+        )
+        self.client.force_login(self.user)
+
+        img = BytesIO()
+        Image.new("RGB", (1, 1), "#FF0000").save(img, format="PNG")
+        img.name = "myimage.png"
+        img.seek(0)
+        data = {
+            "title": "Test Update2",
+            "slug": "test-update2",
+            "categories": [self.data.career.id],
+            "content": "content",
+            "summary": "summary",
+            "is_public": False,
+            "is_published": True,
+            "open_graph_description": "description",
+            "open_graph_image": img,
+        }
+        response = self.client.post(
+            reverse("newsletter:update_post", kwargs={"slug": post.slug}), data=data
+        )
+        self.assertRedirects(
+            response, reverse("newsletter:update_post", kwargs={"slug": "test-update2"})
+        )
+        post.refresh_from_db()
+        self.assertEqual(post.slug, "test-update2")
+        self.assertEqual(post.title, "Test Update2")
+        self.assertEqual(post.categories.get(), self.data.career)
+        self.assertEqual(post.content, "content")
+        self.assertEqual(post.summary, "summary")
+        self.assertEqual(post.open_graph_description, "description")
+        self.assertFalse(post.is_public)
+        self.assertTrue(post.is_published)
+        self.assertIsNotNone(post.open_graph_image.file)
+
+
+class TestCreatePost(DataTestCase):
+    def test_staff_user_required(self):
+        user = User.objects.create_user(username="basic")
+        self.client.force_login(user)
+        url = reverse("newsletter:create_post")
+        response = self.client.post(url)
+        self.assertRedirects(response, f"{settings.LOGIN_URL}?next={url}")
+
+    def test_get(self):
+        self.client.force_login(self.user)
+        url = reverse("newsletter:create_post")
+        response = self.client.get(url)
+        self.assertTemplateUsed(response, "staff/post_form.html")
+
+    def test_invalid(self):
+        self.client.force_login(self.user)
+        response = self.client.post(reverse("newsletter:create_post"), data={})
+        self.assertTemplateUsed(response, "staff/post_form.html")
+        self.assertInHTML(
+            "<li>This field is required.</li>",
+            response.content.decode("utf-8"),
+        )
+
+    def test_create(self):
+        self.client.force_login(self.user)
+
+        img = BytesIO()
+        Image.new("RGB", (1, 1), "#FF0000").save(img, format="PNG")
+        img.name = "myimage.png"
+        img.seek(0)
+        data = {
+            "title": "Test Create",
+            "slug": "test-create",
+            "categories": [self.data.career.id],
+            "content": "content",
+            "summary": "summary",
+            "is_public": False,
+            "is_published": True,
+            "open_graph_description": "description",
+            "open_graph_image": img,
+        }
+        response = self.client.post(reverse("newsletter:create_post"), data=data)
+
+        self.assertRedirects(
+            response, reverse("newsletter:update_post", kwargs={"slug": "test-create"})
+        )
+        post = Post.objects.get(slug="test-create")
+        self.assertEqual(post.title, "Test Create")
+        self.assertEqual(post.categories.get(), self.data.career)
+        self.assertEqual(post.content, "content")
+        self.assertEqual(post.summary, "summary")
+        self.assertEqual(post.open_graph_description, "description")
+        self.assertFalse(post.is_public)
+        self.assertTrue(post.is_published)
+        self.assertIsNotNone(post.open_graph_image.file)
+
+
 class TestUpdateSubscription(DataTestCase):
     def setUp(self) -> None:
         super().setUp()
@@ -122,6 +253,12 @@ class TestUpdateSubscription(DataTestCase):
         url = reverse("newsletter:update_subscription")
         response = self.client.get(url)
         self.assertRedirects(response, f"{settings.LOGIN_URL}?next={url}")
+
+    def test_get(self):
+        self.client.force_login(self.user)
+        url = reverse("newsletter:update_subscription")
+        response = self.client.get(url)
+        self.assertTemplateUsed(response, "subscription/update.html")
 
     def test_invalid(self):
         self.client.force_login(self.user)

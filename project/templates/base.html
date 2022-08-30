@@ -4,6 +4,7 @@
   <title>{% block title %}Tim's Newsletter{% endblock %}</title>
   <link href="{% static 'dist/fomantic-ui-2.8.8.semantic.min.css' %}" type="text/css" media="all" rel="stylesheet" />
   <style>.main-container {margin-top: 5em}</style>
+  {% block open_graph %}{% endblock %}
   {% block css %}{% endblock %}
 </head>
 <body>

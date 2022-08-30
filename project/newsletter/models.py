@@ -110,6 +110,15 @@ class Post(TimestampedModel):
             "If set, all notifications are considered to have been sent and will not be sent again."
         ),
     )
+    open_graph_description = models.TextField(
+        blank=True, help_text=_("Used for SEO purposes and social media sharing.")
+    )
+    open_graph_image = models.ImageField(
+        null=True,
+        blank=True,
+        upload_to="open_graph/",
+        help_text=_("Used for SEO purposes and social media sharing."),
+    )
     objects = models.Manager.from_queryset(PostQuerySet)()
 
     class Meta:

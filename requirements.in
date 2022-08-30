@@ -5,6 +5,7 @@ django-debug-toolbar
 django_coverage_plugin
 django-environ
 django-registration-redux
+Pillow
 martor
 whitenoise
 pre-commit

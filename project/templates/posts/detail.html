@@ -4,6 +4,16 @@
 
 {% block title %}{{ post.title }} | {{ block.super }}{% endblock %}
 
+{% block open_graph %}
+  <meta property="og:title" content="{{ post.title }}" />
+  <meta property="og:url" content="{{ open_graph_url }}" />
+  {% if post.open_graph_image %}
+  <meta property="og:image" content="{{ post.open_graph_image.url }}" />
+  {% endif %}
+  <meta property="og:type" content="article" />
+  <meta property="og:description" content="{{ post.open_graph_description }}" />
+{% endblock %}
+
 {% block content %}
 <div class="ui main text container">
   <div class="ui breadcrumb">
