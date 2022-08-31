@@ -58,6 +58,10 @@ class PostQuerySet(models.QuerySet):
         """Limit to those that are published."""
         return self.filter(is_published=True)
 
+    def unpublished(self):
+        """Limit to those that are unpublished."""
+        return self.filter(is_published=False)
+
     def needs_publishing(self, now=None):
         """Limit to those that aren't published, but are scheduled to be."""
         now = now or timezone.now()

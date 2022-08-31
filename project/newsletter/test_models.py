@@ -56,6 +56,14 @@ class TestPost(DataTestCase):
         )
         self.assertFalse(Post.objects.published().filter(id=self.post.id).exists())
 
+    def test_unpublished(self):
+        self.post.is_published = False
+        self.post.save()
+        self.assertFalse(
+            Post.objects.unpublished().filter(id=self.data.all_post.id).exists()
+        )
+        self.assertTrue(Post.objects.unpublished().filter(id=self.post.id).exists())
+
     def test_needs_publishing(self):
         self.post.is_published = False
         self.post.publish_at = timezone.now() + timedelta(days=1)

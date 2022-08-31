@@ -114,6 +114,62 @@ class TestViewPost(DataTestCase):
         self.assertEqual(response.context["post"], self.data.private_post)
 
 
+class TestUnpublishedPosts(DataTestCase):
+    url = reverse("newsletter:unpublished_posts")
+
+    def setUp(self):
+        super().setUp()
+        self.unpublished_post1 = Post.objects.create(
+            author=self.data.author,
+            title="Unpublished 1",
+            slug="unpublished-1",
+            is_published=False,
+            is_public=False,
+        )
+        self.unpublished_post2 = Post.objects.create(
+            author=self.data.author,
+            title="Unpublished 2",
+            slug="unpublished-2",
+            is_published=False,
+            is_public=True,
+        )
+
+    def test_staff_user_required(self):
+        user = User.objects.create_user(username="basic")
+        self.client.force_login(user)
+        response = self.client.post(self.url)
+        self.assertRedirects(response, f"{settings.LOGIN_URL}?next={self.url}")
+
+    @patch("project.newsletter.views.LIST_POSTS_PAGE_SIZE", 1)
+    def test_authenticated(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url)
+        self.assertTemplateUsed(response, "posts/list.html")
+        self.assertEqual(list(response.context["page"]), [self.unpublished_post2])
+
+        self.assertInHTML(
+            '<a class="item active" href="?page=1">1</a>',
+            response.content.decode("utf-8"),
+        )
+        self.assertInHTML(
+            '<a class="item" href="?page=2">2</a>', response.content.decode("utf-8")
+        )
+
+    @patch("project.newsletter.views.LIST_POSTS_PAGE_SIZE", 1)
+    def test_pagination(self):
+        self.client.force_login(self.user)
+        response = self.client.get(self.url + "?page=2")
+        self.assertTemplateUsed(response, "posts/list.html")
+        self.assertEqual(list(response.context["page"]), [self.unpublished_post1])
+        self.assertInHTML(
+            '<a class="item" href="?page=1">1</a>', response.content.decode("utf-8")
+        )
+        self.assertInHTML(
+            '<a class="item active" href="?page=2">2</a>',
+            response.content.decode("utf-8"),
+        )
+
+
 class TestUpdatePost(DataTestCase):
     def test_staff_user_required(self):
         user = User.objects.create_user(username="basic")

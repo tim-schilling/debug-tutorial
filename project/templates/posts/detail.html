@@ -22,6 +22,10 @@
     <a href="{% url "newsletter:list_posts" %}" class="section">Posts</a>
     <div class="divider"> / </div>
     <div class="active section">{{ post.title }}</div>
+    {% if request.user.is_staff %}
+      <div class="divider"> / </div>
+      <a href="{% url "newsletter:update_post" slug=post.slug %}" class="section">Edit</a>
+    {% endif %}
   </div>
   <p>
     Posted {{ post.publish_date|naturaltime }}

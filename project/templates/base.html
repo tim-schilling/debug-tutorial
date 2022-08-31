@@ -14,9 +14,22 @@
         <a href="{% url "newsletter:landing" %}" class="header item">
           Tim's Newsletter
         </a>
-        <a href="{% url "newsletter:list_posts" %}" class="header item">
-          Posts
-        </a>
+        {% if not request.user.is_staff %}
+          <a href="{% url "newsletter:list_posts" %}" class="header item">
+            Posts
+          </a>
+        {% else %}
+          <div class="ui dropdown item" tabindex="0">
+            Posts
+            <i class="dropdown icon"></i>
+            <div class="menu transition hidden" tabindex="-1">
+              <a href="{% url "newsletter:list_posts" %}" class="item">Published</a>
+              <a href="{% url "newsletter:unpublished_posts" %}" class="item">Unpublished</a>
+              <div class="divider"></div>
+              <a href="{% url "newsletter:create_post" %}" class="item">Create</a>
+            </div>
+          </div>
+        {% endif %}
         {% if not request.user.is_authenticated %}
           <a href="{% url "registration_register" %}" class="header item">Subscribe</a>
           <a href="{% url "auth_login" %}" class="header item">Login</a>

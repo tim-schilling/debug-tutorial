@@ -8,6 +8,7 @@ urlpatterns = [
     path("", views.landing, name="landing"),
     path("account/", views.update_subscription, name="update_subscription"),
     path("analytics/", views.analytics, name="analytics"),
+    path("post/unpublished/", views.unpublished_posts, name="unpublished_posts"),
     path("post/create/", views.create_post, name="create_post"),
     path("post/<slug>/update/", views.update_post, name="update_post"),
     path(

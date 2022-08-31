@@ -94,6 +94,22 @@ def update_subscription(request):
 
 
 @staff_member_required(login_url=settings.LOGIN_URL)
+@require_http_methods(["GET"])
+def unpublished_posts(request):
+    """
+    The post lists view for unpublished posts
+    """
+    posts = Post.objects.recent_first().unpublished()
+    paginator = Paginator(posts, LIST_POSTS_PAGE_SIZE)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    page_range = paginator.get_elided_page_range(page_obj.number)
+    return render(
+        request, "posts/list.html", {"page": page_obj, "page_range": page_range}
+    )
+
+
+@staff_member_required(login_url=settings.LOGIN_URL)
 @require_http_methods(["GET", "POST"])
 def create_post(request):
     """
