@@ -22,15 +22,4 @@
   <div class="left floated six wide column">
     <a href="{{ post.get_absolute_url }}" class="ui large button">Read More</a>
   </div>
-  {% if request.user.is_staff %}
-    <div class="right floated six wide column">
-      <form action="{% url "newsletter:toggle_post_privacy" slug=post.slug %}?next={{ request.path }}" method="post">
-        {% csrf_token %}
-        <div class="ui buttons">
-          <a href="{% url "newsletter:update_post" slug=post.slug %}" class="ui basic compact button">Edit</a>
-          <button class="ui basic compact button" type="submit">Set to {% if post.is_public %}private{% else %}public{% endif %}</button>
-        </div>
-      </form>
-    </div>
-  {% endif %}
 </div>
