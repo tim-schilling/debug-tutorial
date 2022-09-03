@@ -1,0 +1,14 @@
+{% comment %}
+Render the datetime is a localized format.
+Takes the following context:
+
+  timestamp: datetime instance
+  is_unread: boolean
+  is_recent: boolean
+{% endcomment %}
+{% load humanize %}
+
+<span class="{% if is_unread %}ui purple text{% endif %}" title="{{ timestamp|date:"DATETIME_FORMAT" }}">
+  {{ timestamp|naturaltime }}
+  {% if is_recent %}<span class="ui label">*New*</span>{% endif %}
+</span>
