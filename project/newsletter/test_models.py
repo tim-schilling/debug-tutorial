@@ -1,9 +1,9 @@
 from datetime import timedelta
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AnonymousUser, User
 from django.utils import timezone
 
-from project.newsletter.models import Post, Subscription
+from project.newsletter.models import Post, Subscription, SubscriptionNotification
 from project.newsletter.test import DataTestCase
 
 
@@ -145,6 +145,40 @@ class TestPost(DataTestCase):
             Post.objects.in_relevant_categories(subscription)
             .filter(id=self.data.private_post.id)
             .exists()
+        )
+
+    def test_annotate_is_unread(self):
+        notification = SubscriptionNotification.objects.create(
+            subscription=self.data.subscription,
+            post=self.data.all_post,
+        )
+        # Test unsent
+        self.assertFalse(
+            Post.objects.annotate_is_unread(self.data.subscription.user)
+            .get(id=self.data.all_post.id)
+            .is_unread
+        )
+        notification.sent = timezone.now()
+        notification.save()
+        # Test valid case
+        self.assertTrue(
+            Post.objects.annotate_is_unread(self.data.subscription.user)
+            .get(id=self.data.all_post.id)
+            .is_unread
+        )
+        # Test unauthenticated user case
+        self.assertFalse(
+            Post.objects.annotate_is_unread(AnonymousUser())
+            .get(id=self.data.all_post.id)
+            .is_unread
+        )
+        notification.read = timezone.now()
+        notification.save()
+        # Test read notification case
+        self.assertFalse(
+            Post.objects.annotate_is_unread(self.data.subscription.user)
+            .get(id=self.data.all_post.id)
+            .is_unread
         )
 
 

@@ -1,8 +1,8 @@
 from typing import Optional
 
-from django.contrib.auth.models import User
+from django.contrib.auth.models import AnonymousUser, User
 from django.db import models
-from django.db.models import F
+from django.db.models import Exists, F, OuterRef
 from django.db.models.functions import Coalesce
 from django.urls import reverse
 from django.utils import timezone
@@ -83,6 +83,32 @@ class PostQuerySet(models.QuerySet):
         :return: a Post QuerySet.
         """
         return self.filter(categories__subscriptions=subscription).distinct()
+
+    def annotate_is_unread(self, user):
+        """
+        Annotate is_unread onto the Post queryset.
+
+        If the user is authenticated, determine if the user was sent a
+        notification regarding the post, but hasn't read it.
+
+        If the user is unauthenticated (AnonymousUser), then mark all
+        posts as "read".
+
+        :param user: The User instance.
+        :return: a Post QuerySet.
+        """
+        if isinstance(user, AnonymousUser):
+            return self.annotate(is_unread=models.Value(False))
+        return self.annotate(
+            is_unread=Exists(
+                SubscriptionNotification.objects.filter(
+                    post_id=OuterRef("id"),
+                    subscription__user=user,
+                    sent__isnull=False,
+                    read__isnull=True,
+                )
+            )
+        )
 
 
 class Post(TimestampedModel):
@@ -229,6 +255,7 @@ class SubscriptionNotification(TimestampedModel):
         Post, related_name="subscription_notifications", on_delete=models.CASCADE
     )
     sent = models.DateTimeField(null=True, blank=True)
+    read = models.DateTimeField(null=True, blank=True)
     objects = models.Manager.from_queryset(SubscriptionNotificationQuerySet)()
 
     def __repr__(self):
