@@ -45,6 +45,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
     list_display = ["user_email", "categories_list"]
     list_select_related = ["user"]
     search_fields = ["categories__title", "user__username", "user__email"]
+    raw_id_fields = ["user"]
 
     @admin.decorators.display(description="Categories")
     def categories_list(self, obj):
@@ -59,6 +60,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
 class SubscriptionNotificationAdmin(admin.ModelAdmin):
     list_display = ["user_email", "post", "sent", "created"]
     list_select_related = ["subscription__user", "post"]
+    raw_id_fields = ["post", "subscription"]
 
     @admin.decorators.display(ordering="subscription__user__email")
     def user_email(self, obj):
