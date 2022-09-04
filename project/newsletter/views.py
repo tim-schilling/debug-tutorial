@@ -17,6 +17,7 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
 from martor.utils import LazyEncoder
 
+from project.newsletter import operations
 from project.newsletter.forms import PostForm, SubscriptionForm
 from project.newsletter.models import Category, Post, Subscription
 
@@ -31,7 +32,7 @@ def landing(request):
     Render the public posts or the most recent posts an authenticated
     user is subscribed for.
     """
-    posts = Post.objects.recent_first().published()
+    posts = Post.objects.recent_first().published().annotate_is_unread(request.user)
     if request.user.is_authenticated and (
         subscription := Subscription.objects.for_user(request.user)
     ):
@@ -46,7 +47,7 @@ def list_posts(request):
     """
     The post lists view.
     """
-    posts = Post.objects.recent_first().published()
+    posts = Post.objects.recent_first().published().annotate_is_unread(request.user)
     if not request.user.is_authenticated:
         posts = posts.public()
     paginator = Paginator(posts, LIST_POSTS_PAGE_SIZE)
@@ -63,10 +64,12 @@ def view_post(request, slug):
     """
     The post detail view.
     """
-    posts = Post.objects.published()
+    posts = Post.objects.published().annotate_is_unread(request.user)
     if not request.user.is_authenticated:
         posts = posts.public()
     post = get_object_or_404(posts, slug=slug)
+    if post.is_unread:
+        operations.mark_as_read(post, request.user)
     return render(
         request,
         "posts/detail.html",

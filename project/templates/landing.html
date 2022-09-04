@@ -1,5 +1,4 @@
 {% extends "base.html" %}
-{% load martortags %}
 
 {% block content %}
 
@@ -39,18 +38,7 @@
   <div class="ui vertical stripe segment">
     <div class="ui text container">
       {% for post in posts %}
-        <h3 class="ui header">{{ post.title }}</h3>
-        <p>{{ post.summary|safe_markdown }}</p>
-        <div class="ui grid middle aligned">
-          <div class="left floated six wide column">
-            <a href="{{ post.get_absolute_url }}" class="ui large button">Read More</a>
-          </div>
-          {% if request.user.is_staff %}
-            <div class="right floated six wide column">
-              <a href="{% url "newsletter:update_post" slug=post.slug %}" class="ui basic compact button">Edit</a>
-            </div>
-          {% endif %}
-        </div>
+        {% include "posts/includes/list_item.html" with post=post %}
         {% if not forloop.last %}
           <div class="ui section divider"></div>
         {% endif %}

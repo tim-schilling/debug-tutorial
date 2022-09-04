@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.utils import timezone
 from PIL import Image
 
-from project.newsletter.models import Post, Subscription
+from project.newsletter.models import Post, Subscription, SubscriptionNotification
 from project.newsletter.test import DataTestCase
 
 
@@ -112,6 +112,21 @@ class TestViewPost(DataTestCase):
         )
         self.assertTemplateUsed(response, "posts/detail.html")
         self.assertEqual(response.context["post"], self.data.private_post)
+
+    def test_mark_as_read(self):
+        notification = SubscriptionNotification.objects.create(
+            subscription=self.data.subscription,
+            post=self.data.all_post,
+            sent=timezone.now(),
+        )
+        self.client.force_login(self.data.subscription.user)
+        response = self.client.get(
+            reverse("newsletter:view_post", kwargs={"slug": self.data.all_post.slug})
+        )
+        self.assertTemplateUsed(response, "posts/detail.html")
+        self.assertEqual(response.context["post"], self.data.all_post)
+        notification.refresh_from_db()
+        self.assertIsNotNone(notification.read)
 
 
 class TestUnpublishedPosts(DataTestCase):

@@ -9,6 +9,7 @@ urlpatterns = (
     [
         path("admin/", admin.site.urls),
         path("account/", include("registration.backends.simple.urls")),
+        path("i18n/", include("django.conf.urls.i18n")),
         path("martor/", include("martor.urls")),
         path("", include(project.newsletter.urls)),
     ]
