@@ -1,6 +1,7 @@
 from typing import Optional
 
 from django.contrib.auth.models import AnonymousUser, User
+from django.core import validators
 from django.db import models
 from django.db.models import Exists, F, OuterRef
 from django.db.models.functions import Coalesce
@@ -25,9 +26,9 @@ class Category(TimestampedModel):
     """Categories of content."""
 
     title = models.CharField(max_length=512)
-    slug = models.SlugField(
+    slug = models.CharField(
         max_length=100,
-        allow_unicode=True,
+        validators=[validators.validate_unicode_slug],
         help_text=_("Unique URL-friendly identifier."),
     )
 
