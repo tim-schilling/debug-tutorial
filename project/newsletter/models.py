@@ -34,9 +34,6 @@ class Category(TimestampedModel):
 
     class Meta:
         verbose_name_plural = _("categories")
-        constraints = [
-            models.UniqueConstraint(fields=("slug",), name="category_unq_slug"),
-        ]
         ordering = ["title"]
 
     def __str__(self):
@@ -116,9 +113,9 @@ class Post(TimestampedModel):
     """A piece of content to be drafted and published."""
 
     title = models.CharField(max_length=512)
-    slug = models.SlugField(
+    slug = models.CharField(
         max_length=100,
-        allow_unicode=True,
+        validators=[validators.validate_unicode_slug],
         help_text=_("Unique URL-friendly identifier."),
     )
     author = models.ForeignKey(User, related_name="posts", on_delete=models.PROTECT)
@@ -151,11 +148,6 @@ class Post(TimestampedModel):
         help_text=_("Used for SEO purposes and social media sharing."),
     )
     objects = models.Manager.from_queryset(PostQuerySet)()
-
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(fields=("slug",), name="post_unq_slug"),
-        ]
 
     def __str__(self):
         return self.title
