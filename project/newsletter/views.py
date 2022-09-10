@@ -26,6 +26,41 @@ LIST_POSTS_PAGE_SIZE = 100
 
 
 @require_http_methods(["GET"])
+def landing(request):
+    """
+    The landing page view.
+
+    Render the public posts or the most recent posts an authenticated
+    user is subscribed for.
+    """
+    posts = Post.objects.recent_first().published().annotate_is_unread(request.user)
+    if request.user.is_authenticated and (
+        subscription := Subscription.objects.for_user(request.user)
+    ):
+        posts = posts.in_relevant_categories(subscription)
+    else:
+        posts = posts.public()
+    return render(request, "landing.html", {"posts": posts[:3]})
+
+
+@require_http_methods(["GET"])
+def list_posts(request):
+    """
+    The post lists view.
+    """
+    posts = Post.objects.recent_first().published().annotate_is_unread(request.user)
+    if not request.user.is_authenticated:
+        posts = posts.public()
+    paginator = Paginator(posts, LIST_POSTS_PAGE_SIZE)
+    page_number = request.GET.get("page")
+    page_obj = paginator.get_page(page_number)
+    page_range = paginator.get_elided_page_range(page_obj.number)
+    return render(
+        request, "posts/list.html", {"page": page_obj, "page_range": page_range}
+    )
+
+
+@require_http_methods(["GET"])
 def view_post(request, slug):
     """
     The post detail view.
@@ -64,7 +99,7 @@ def update_subscription(request):
                 form.instance.user = request.user
             form.save()
             messages.success(request, "Your subscription changes have been saved.")
-            return redirect("/")
+            return redirect("newsletter:list_posts")
     return render(request, "subscription/update.html", {"form": form})
 
 
@@ -139,7 +174,7 @@ def toggle_post_privacy(request, slug):
     messages.success(request, f"Post slug={slug} was updated.")
     if url := request.GET.get("next"):
         return redirect(url)
-    return redirect("/admin/")
+    return redirect("newsletter:list_posts")
 
 
 @staff_member_required(login_url=settings.LOGIN_URL)
