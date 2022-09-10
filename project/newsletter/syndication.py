@@ -1,5 +1,4 @@
 from django.contrib.syndication.views import Feed
-from django.urls import reverse
 
 from project.newsletter.models import Category, Post
 
@@ -47,7 +46,7 @@ class RecentCategorizedPostsFeed(RecentPostsFeed):
         return f"{obj.title} newsletter posts"
 
     def item_link(self, obj):
-        return reverse("newsletter:list_posts") + f"?category={obj.slug}"
+        return "/p/" + f"?category={obj.slug}"
 
     def items(self, obj):
         return (
