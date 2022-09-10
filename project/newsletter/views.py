@@ -32,7 +32,12 @@ def landing(request):
     Render the public posts or the most recent posts an authenticated
     user is subscribed for.
     """
-    posts = Post.objects.recent_first().published().annotate_is_unread(request.user)
+    posts = (
+        Post.objects.recent_first()
+        .published()
+        .annotate_is_unread(request.user)
+        .prefetch_related("categories")
+    )
     if request.user.is_authenticated and (
         subscription := Subscription.objects.for_user(request.user)
     ):
@@ -47,7 +52,12 @@ def list_posts(request):
     """
     The post lists view.
     """
-    posts = Post.objects.recent_first().published().annotate_is_unread(request.user)
+    posts = (
+        Post.objects.recent_first()
+        .published()
+        .annotate_is_unread(request.user)
+        .prefetch_related("categories")
+    )
     if not request.user.is_authenticated:
         posts = posts.public()
     paginator = Paginator(posts, LIST_POSTS_PAGE_SIZE)
@@ -102,7 +112,7 @@ def unpublished_posts(request):
     """
     The post lists view for unpublished posts
     """
-    posts = Post.objects.recent_first().unpublished()
+    posts = Post.objects.recent_first().unpublished().prefetch_related("categories")
     paginator = Paginator(posts, LIST_POSTS_PAGE_SIZE)
     page_number = request.GET.get("page")
     page_obj = paginator.get_page(page_number)

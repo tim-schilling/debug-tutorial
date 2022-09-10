@@ -29,6 +29,8 @@ class TestLanding(DataTestCase):
         self.assertEqual(
             list(response.context["posts"]), [self.data.career_post, self.data.all_post]
         )
+        # Verify the categories are rendered
+        self.assertContains(response, self.data.career_post.categories.first().title)
 
     def test_authenticated_subscriber(self):
         self.client.force_login(self.data.subscription.user)
@@ -49,6 +51,7 @@ class TestListPosts(DataTestCase):
         self.assertTemplateUsed(response, "posts/list.html")
         self.assertEqual(list(response.context["page"]), [self.data.career_post])
 
+        # Verify the pagination exists.
         self.assertInHTML(
             '<a class="item active" href="?page=1">1</a>',
             response.content.decode("utf-8"),
@@ -64,6 +67,9 @@ class TestListPosts(DataTestCase):
         self.assertTemplateUsed(response, "posts/list.html")
         self.assertEqual(list(response.context["page"]), [self.data.private_post])
 
+        # Verify the categories are rendered
+        self.assertContains(response, self.data.private_post.categories.first().title)
+        # Verify the pagination exists.
         self.assertInHTML(
             '<a class="item active" href="?page=1">1</a>',
             response.content.decode("utf-8"),
@@ -78,6 +84,7 @@ class TestListPosts(DataTestCase):
         response = self.client.get(self.url + "?page=2")
         self.assertTemplateUsed(response, "posts/list.html")
         self.assertEqual(list(response.context["page"]), [self.data.career_post])
+        # Verify the pagination exists.
         self.assertInHTML(
             '<a class="item" href="?page=1">1</a>', response.content.decode("utf-8")
         )
