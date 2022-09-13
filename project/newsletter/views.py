@@ -164,10 +164,8 @@ def analytics(request):
     The post detail view.
     """
     now = timezone.now()
-    aggregates = Subscription.objects.all().aggregate(
-        subscribed_users=Count(
-            "user", distinct=True, filter=Q(categories__isnull=False)
-        ),
+    subscription_aggregates = Subscription.objects.all().aggregate(
+        subscriptions=Count("user", distinct=True, filter=Q(categories__isnull=False)),
         subscriptions_30_days=Count(
             "id",
             filter=Q(categories__isnull=False, created__gte=now - timedelta(days=30)),
@@ -184,8 +182,31 @@ def analytics(request):
             distinct=True,
         ),
     )
-    category_aggregates = dict(
+    subscription_category_aggregates = dict(
         Category.objects.annotate(count=Count("subscriptions"))
+        .order_by("title")
+        .values_list("title", "count")
+    )
+    post_aggregates = Post.objects.all().aggregate(
+        posts=Count("id"),
+        posts_30_days=Count(
+            "id",
+            filter=Q(created__gte=now - timedelta(days=30)),
+            distinct=True,
+        ),
+        posts_90_days=Count(
+            "id",
+            filter=Q(created__gte=now - timedelta(days=90)),
+            distinct=True,
+        ),
+        posts_180_days=Count(
+            "id",
+            filter=Q(created__gte=now - timedelta(days=180)),
+            distinct=True,
+        ),
+    )
+    post_category_aggregates = dict(
+        Category.objects.annotate(count=Count("posts"))
         .order_by("title")
         .values_list("title", "count")
     )
@@ -195,12 +216,23 @@ def analytics(request):
         "staff/analytics.html",
         {
             "aggregates": {
-                "Subscribed users": aggregates["subscribed_users"],
-                "Subscriptions (30 days)": aggregates["subscriptions_30_days"],
-                "Subscriptions (90 days)": aggregates["subscriptions_90_days"],
-                "Subscriptions (180 days)": aggregates["subscriptions_180_days"],
+                "Subscriptions": subscription_aggregates["subscriptions"],
+                "Subscriptions (30 days)": subscription_aggregates[
+                    "subscriptions_30_days"
+                ],
+                "Subscriptions (90 days)": subscription_aggregates[
+                    "subscriptions_90_days"
+                ],
+                "Subscriptions (180 days)": subscription_aggregates[
+                    "subscriptions_180_days"
+                ],
+                "Posts": post_aggregates["posts"],
+                "Posts (30 days)": post_aggregates["posts_30_days"],
+                "Posts (90 days)": post_aggregates["posts_90_days"],
+                "Posts (180 days)": post_aggregates["posts_180_days"],
             },
-            "category_aggregates": category_aggregates,
+            "subscription_category_aggregates": subscription_category_aggregates,
+            "post_category_aggregates": post_category_aggregates,
         },
     )
 

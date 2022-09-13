@@ -368,18 +368,29 @@ class TestAnalytics(DataTestCase):
         self.assertEqual(
             response.context["aggregates"],
             {
-                "Subscribed users": 1,
+                "Subscriptions": 1,
                 "Subscriptions (30 days)": 1,
                 "Subscriptions (90 days)": 1,
                 "Subscriptions (180 days)": 1,
+                "Posts": 3,
+                "Posts (30 days)": 3,
+                "Posts (90 days)": 3,
+                "Posts (180 days)": 3,
             },
         )
 
         self.assertEqual(
-            response.context["category_aggregates"],
+            response.context["subscription_category_aggregates"],
             {
                 self.data.career.title: 1,
                 self.data.social.title: 1,
+            },
+        )
+        self.assertEqual(
+            response.context["post_category_aggregates"],
+            {
+                self.data.career.title: 2,
+                self.data.social.title: 2,
             },
         )
 
@@ -402,17 +413,28 @@ class TestAnalytics(DataTestCase):
         self.assertEqual(
             response.context["aggregates"],
             {
-                "Subscribed users": 4,
+                "Subscriptions": 4,
                 "Subscriptions (30 days)": 1,
                 "Subscriptions (90 days)": 2,
                 "Subscriptions (180 days)": 3,
+                "Posts": 3,
+                "Posts (30 days)": 3,
+                "Posts (90 days)": 3,
+                "Posts (180 days)": 3,
             },
         )
 
         self.assertEqual(
-            response.context["category_aggregates"],
+            response.context["subscription_category_aggregates"],
             {
                 self.data.career.title: 4,
                 self.data.social.title: 4,
+            },
+        )
+        self.assertEqual(
+            response.context["post_category_aggregates"],
+            {
+                self.data.career.title: 2,
+                self.data.social.title: 2,
             },
         )

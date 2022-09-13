@@ -28,9 +28,15 @@
           <td>{{ value }}</td>
         </tr>
         {% endfor %}
-        {% for category, value in category_aggregates.items %}
+        {% for category, value in subscription_category_aggregates.items %}
         <tr>
           <td>{{ category }} subscriptions</td>
+          <td>{{ value }}</td>
+        </tr>
+        {% endfor %}
+        {% for category, value in post_category_aggregates.items %}
+        <tr>
+          <td>{{ category }} posts</td>
           <td>{{ value }}</td>
         </tr>
         {% endfor %}
