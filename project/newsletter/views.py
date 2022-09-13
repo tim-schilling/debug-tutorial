@@ -192,17 +192,14 @@ def analytics(request):
         posts_30_days=Count(
             "id",
             filter=Q(created__gte=now - timedelta(days=30)),
-            distinct=True,
         ),
         posts_90_days=Count(
             "id",
             filter=Q(created__gte=now - timedelta(days=90)),
-            distinct=True,
         ),
         posts_180_days=Count(
             "id",
             filter=Q(created__gte=now - timedelta(days=180)),
-            distinct=True,
         ),
     )
     post_category_aggregates = dict(
