@@ -6,11 +6,12 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
+from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.paginator import Paginator
-from django.db.models import Count, Q
-from django.http import HttpResponse, JsonResponse
+from django.db.models import Case, Count, F, Q, Value, When
+from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -74,17 +75,23 @@ def view_post(request, slug):
     """
     The post detail view.
     """
-    posts = Post.objects.published().annotate_is_unread(request.user)
-    if not request.user.is_authenticated:
-        posts = posts.public()
-    post = get_object_or_404(posts, slug=slug)
-    if post.is_unread:
-        operations.mark_as_read(post, request.user)
+    post = cache.get(f"post.detail.{slug}", None)
+    if request.user.is_authenticated or not post:
+        posts = Post.objects.published().annotate_is_unread(request.user)
+        if not request.user.is_authenticated:
+            posts = posts.public()
+        post = get_object_or_404(posts, slug=slug)
+        if post.is_unread:
+            operations.mark_as_read(post, request.user)
+        if post.is_public:
+            cache.set(f"post.detail.{slug}", post, timeout=600)
+    is_trending = operations.check_is_trending(post)
     return render(
         request,
         "posts/detail.html",
         {
             "post": post,
+            "is_trending": is_trending,
             "open_graph_url": request.build_absolute_uri(post.get_absolute_url()),
         },
     )
@@ -155,6 +162,29 @@ def update_post(request, slug):
             messages.success(request, f"Post '{post.title}' was updated successfully.")
             return redirect("newsletter:update_post", slug=post.slug)
     return render(request, "staff/post_form.html", {"form": form, "post": post})
+
+
+@staff_member_required(login_url=settings.LOGIN_URL)
+@require_http_methods(["POST"])
+def toggle_post_privacy(request, slug):
+    """
+    Toggle Post.is_public and redirect back to next url or list view.
+    """
+    updated = (
+        Post.objects.filter(slug=slug)
+        .annotate(
+            inverted_is_public=Case(
+                When(is_public=True, then=Value(False)), default=Value(True)
+            )
+        )
+        .update(is_public=F("inverted_is_public"))
+    )
+    if not updated:
+        raise Http404
+    messages.success(request, f"Post slug={slug} was updated.")
+    if url := request.GET.get("next"):
+        return redirect(url)
+    return redirect("newsletter:list_posts")
 
 
 @staff_member_required(login_url=settings.LOGIN_URL)

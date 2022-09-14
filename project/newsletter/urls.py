@@ -12,6 +12,11 @@ urlpatterns = [
     path("post/create/", views.create_post, name="create_post"),
     path("post/<slug>/update/", views.update_post, name="update_post"),
     path(
+        "post/<slug>/toggle_privacy/",
+        views.toggle_post_privacy,
+        name="toggle_post_privacy",
+    ),
+    path(
         "p/",
         include(
             [

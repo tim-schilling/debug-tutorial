@@ -135,6 +135,20 @@ class TestViewPost(DataTestCase):
         notification.refresh_from_db()
         self.assertIsNotNone(notification.read)
 
+    def test_cached_response(self):
+        post = Post.objects.create(
+            slug="cached",
+            title="cached",
+            author=self.data.author,
+            is_public=True,
+            is_published=True,
+        )
+        with self.assertNumQueries(1):
+            self.client.get(reverse("newsletter:view_post", kwargs={"slug": post.slug}))
+
+        with self.assertNumQueries(0):
+            self.client.get(reverse("newsletter:view_post", kwargs={"slug": post.slug}))
+
 
 class TestUnpublishedPosts(DataTestCase):
     url = reverse("newsletter:unpublished_posts")
@@ -262,6 +276,51 @@ class TestUpdatePost(DataTestCase):
         self.assertFalse(post.is_public)
         self.assertTrue(post.is_published)
         self.assertIsNotNone(post.open_graph_image.file)
+
+
+class TestTogglePostPrivacy(DataTestCase):
+    def test_staff_user_required(self):
+        user = User.objects.create_user(username="basic")
+        self.client.force_login(user)
+        url = reverse(
+            "newsletter:toggle_post_privacy",
+            kwargs={"slug": self.data.private_post.slug},
+        )
+        response = self.client.post(url)
+        self.assertRedirects(response, f"{settings.LOGIN_URL}?next={url}")
+
+    def test_toggle_404(self):
+        self.client.force_login(self.user)
+        url = reverse("newsletter:toggle_post_privacy", kwargs={"slug": "invalid"})
+        response = self.client.post(url)
+        self.assertEqual(response.status_code, 404)
+
+    def test_toggle(self):
+        self.client.force_login(self.user)
+
+        post = Post.objects.create(
+            author=self.data.author,
+            title="Test toggle",
+            slug="test-toggle",
+            content="c",
+            is_public=True,
+        )
+        url = reverse("newsletter:toggle_post_privacy", kwargs={"slug": post.slug})
+        response = self.client.post(url)
+        self.assertRedirects(response, reverse("newsletter:list_posts"))
+        post.refresh_from_db()
+        self.assertFalse(post.is_public)
+
+        # Toggle the property back and verify the redirect to next.
+        response = self.client.post(
+            url
+            + f'?next={reverse("newsletter:update_post", kwargs={"slug": post.slug})}'
+        )
+        self.assertRedirects(
+            response, reverse("newsletter:update_post", kwargs={"slug": post.slug})
+        )
+        post.refresh_from_db()
+        self.assertTrue(post.is_public)
 
 
 class TestCreatePost(DataTestCase):

@@ -21,7 +21,14 @@
     <div class="divider"> / </div>
     <a href="{% url "newsletter:list_posts" %}" class="section">Posts</a>
     <div class="divider"> / </div>
-    <div class="active section">{{ post.title }}</div>
+    <div class="active section">
+      {% if is_trending %}
+        <em data-emoji="fire"></em>{{ post.title }}<em data-emoji="fire"></em>
+      {% else %}
+        {{ post.title }}
+      {% endif %}
+
+    </div>
     {% if request.user.is_staff %}
       <div class="divider"> / </div>
       <a href="{% url "newsletter:update_post" slug=post.slug %}" class="section">Edit</a>

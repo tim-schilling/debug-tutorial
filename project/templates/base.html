@@ -51,14 +51,12 @@
   <div class="ui container main-container">
     {% block messages %}
       {% if messages %}
-        <div class="ui segment">
-          <div class="messages">
-            {% for message in messages %}
-              <div class="ui {% if message.tags %}{{ message.tags }}{% else %}info{% endif %} message">
-                <p>{{ message }}</p>
-              </div>
-            {% endfor %}
-          </div>
+        <div class="messages">
+          {% for message in messages %}
+            <div class="ui {% if message.tags %}{{ message.tags }}{% else %}info{% endif %} message">
+              <p>{{ message }}</p>
+            </div>
+          {% endfor %}
         </div>
       {% endif %}
     {% endblock %}
