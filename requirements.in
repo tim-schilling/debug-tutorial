@@ -10,3 +10,4 @@ martor
 pre-commit
 faker
 mdgen
+backports.zoneinfo;python_version<"3.9"
