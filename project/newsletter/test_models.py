@@ -38,8 +38,8 @@ class TestPost(DataTestCase):
         # Create a new post that's a copy of all_post
         self.assertEqual(Post.objects.recent_first().first(), self.post)
         # Set publish_at to a value that's older than private_post's created
-        self.post.created = timezone.now() - timedelta(days=10)
-        self.post.save(update_fields=["created"])
+        self.post.publish_at = timezone.now() - timedelta(days=10)
+        self.post.save()
         self.assertEqual(Post.objects.recent_first().first(), self.data.private_post)
 
     def test_public(self):

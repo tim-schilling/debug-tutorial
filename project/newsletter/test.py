@@ -1,4 +1,5 @@
 from dataclasses import dataclass
+from datetime import timedelta
 
 from django.contrib.auth.models import User
 from django.test import Client, RequestFactory, TestCase
@@ -37,6 +38,8 @@ def create_test_data() -> TestData:
         is_public=True,
         notifications_sent=timezone.now(),
     )
+    all_post.created -= timedelta(minutes=3)
+    all_post.save(update_fields=["created"])
     all_post.categories.set([career, social])
     career_post = Post.objects.create(
         title="Career post",
@@ -48,6 +51,8 @@ def create_test_data() -> TestData:
         is_public=True,
         notifications_sent=timezone.now(),
     )
+    career_post.created -= timedelta(minutes=2)
+    career_post.save(update_fields=["created"])
     career_post.categories.set([career])
     private_post = Post.objects.create(
         title="Private post",
@@ -59,6 +64,8 @@ def create_test_data() -> TestData:
         is_public=False,
         notifications_sent=timezone.now(),
     )
+    private_post.created -= timedelta(minutes=1)
+    private_post.save(update_fields=["created"])
     private_post.categories.set([social])
 
     subscriber = User.objects.create_user(

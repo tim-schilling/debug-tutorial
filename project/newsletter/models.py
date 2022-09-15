@@ -4,6 +4,7 @@ from django.contrib.auth.models import AnonymousUser, User
 from django.core import validators
 from django.db import models
 from django.db.models import Exists, F, OuterRef
+from django.db.models.functions import Coalesce
 from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
@@ -45,7 +46,7 @@ class Category(TimestampedModel):
 class PostQuerySet(models.QuerySet):
     def recent_first(self):
         """Order by so most recently published or created are first."""
-        return self.order_by("-created")
+        return self.order_by(Coalesce("publish_at", "created").desc())
 
     def public(self):
         """Limit to those that are published."""
