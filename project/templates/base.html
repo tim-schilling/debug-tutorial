@@ -1,7 +1,7 @@
 {% load static %}<!DOCTYPE html>
 <html lang="en-us">
 <head>
-  <title>{% block title %}Tim's Newsletter{% endblock %}</title>
+  <title>{% block title %}Debug Newsletter{% endblock %}</title>
   <link href="{% static 'dist/fomantic-ui-2.8.8.semantic.min.css' %}" type="text/css" media="all" rel="stylesheet" />
   <style>.main-container {margin-top: 5em}</style>
   {% block open_graph %}{% endblock %}
@@ -12,7 +12,7 @@
     <div class="ui fixed inverted menu">
       <div class="ui container">
         <a href="{% url "newsletter:landing" %}" class="header item">
-          Tim's Newsletter
+          Debug Newsletter
         </a>
         {% if not request.user.is_staff %}
           <a href="{% url "newsletter:list_posts" %}" class="header item">
@@ -40,7 +40,7 @@
           {% endif %}
         {% endif %}
         <div class="right menu">
-          <a class="item" href="https://github.com/tim-schilling/newsletter" target="_blank">
+          <a class="item" href="https://github.com/tim-schilling/debug-tutorial" target="_blank">
             <i class="github icon"></i> Github
           </a>
         </div>

@@ -7,7 +7,7 @@ def create_site(apps, schema_editor):  # pragma: nocover
     Site = apps.get_model("sites", "Site")
     site = Site.objects.filter(domain="example.com").first()
     if site:
-        site.name = "Tim's Newsletter"
+        site.name = "Debug Newsletter"
         site.domain = "127.0.0.1:8000"
         site.save()
 
