@@ -162,6 +162,8 @@ class TestUnpublishedPosts(DataTestCase):
             is_published=False,
             is_public=False,
         )
+        self.unpublished_post1.created -= timedelta(seconds=30)
+        self.unpublished_post1.save(update_fields=["created"])
         self.unpublished_post2 = Post.objects.create(
             author=self.data.author,
             title="Unpublished 2",
@@ -455,9 +457,7 @@ class TestAnalytics(DataTestCase):
 
     def test_date_aggregates(self):
         # Create users that are outside the cut-off points.
-        # IE: The 180 day user will not appear in the subscription 180 days count
-        # because it's beyond the cut-off date.
-        for days in [30, 90, 180]:
+        for days in [31, 91, 181]:
             user = User.objects.create_user(username=f"days{days}")
             subscription = Subscription.objects.create(user=user)
             # We can't specify created in .create() because it's automatically set.
