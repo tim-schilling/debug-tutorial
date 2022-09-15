@@ -34,9 +34,7 @@ def main():
     if running_tests:
         cov.stop()
         cov.save()
-        covered = cov.report()
-        if covered < 100:
-            sys.exit(1)
+        cov.report()
 
 
 if __name__ == "__main__":
