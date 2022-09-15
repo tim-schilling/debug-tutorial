@@ -1,9 +1,8 @@
 from collections import OrderedDict
-from datetime import datetime
+from datetime import datetime, timezone
 from functools import partial
 
 from django.contrib.auth.models import User
-from django.utils import timezone
 from faker import Faker
 
 from project.data.category import CategoryData

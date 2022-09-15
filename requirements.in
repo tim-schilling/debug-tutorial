@@ -7,7 +7,6 @@ django-environ
 django-registration-redux
 Pillow
 martor
-whitenoise
 pre-commit
 faker
 mdgen

@@ -1,7 +1,6 @@
-from datetime import datetime
+from datetime import datetime, timezone
 from itertools import cycle
 
-from django.utils import timezone
 from faker import Faker
 from faker.utils.text import slugify
 from mdgen import MarkdownPostProvider
