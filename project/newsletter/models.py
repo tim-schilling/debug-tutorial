@@ -14,7 +14,7 @@ from martor.models import MartorField
 class TimestampedModel(models.Model):
     """Abstract model that adds created and updated timestamps."""
 
-    created = models.DateTimeField(auto_now_add=True)
+    created = models.DateTimeField(default=timezone.now, editable=False)
     updated = models.DateTimeField(auto_now=True)
 
     class Meta:

@@ -40,8 +40,23 @@ def generate_data(user, image_category, post_categories):
     for i in range(20000):
         title = fake.sentence()
         slug = slugify(title) + f"-{fake.pyint(10, 99999)}"
+        publish_at = (
+            fake.date_time_between_dates(
+                datetime_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
+                datetime_end=datetime(2022, 10, 12, tzinfo=timezone.utc),
+                tzinfo=timezone.utc,
+            )
+            if fake.pybool()
+            else None
+        )
+        created = fake.date_time_between_dates(
+            datetime_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
+            datetime_end=publish_at or datetime(2022, 10, 12, tzinfo=timezone.utc),
+            tzinfo=timezone.utc,
+        )
         image_posts.append(
             Post(
+                created=created,
                 author=user,
                 title=title,
                 slug=slug,
@@ -49,11 +64,7 @@ def generate_data(user, image_category, post_categories):
                 content=short_photo_update(),
                 is_public=True,
                 is_published=True,
-                publish_at=fake.date_time_between_dates(
-                    datetime_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
-                    datetime_end=datetime(2022, 10, 12, tzinfo=timezone.utc),
-                    tzinfo=timezone.utc,
-                ),
+                publish_at=publish_at,
             )
         )
     Post.objects.bulk_create(image_posts, batch_size=500, ignore_conflicts=True)
@@ -74,8 +85,23 @@ def generate_data(user, image_category, post_categories):
     for i in range(5000):
         title = fake.sentence()
         slug = slugify(title) + f"-{fake.pyint(10, 9999)}"
+        publish_at = (
+            fake.date_time_between_dates(
+                datetime_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
+                datetime_end=datetime(2022, 10, 12, tzinfo=timezone.utc),
+                tzinfo=timezone.utc,
+            )
+            if fake.pybool()
+            else None
+        )
+        created = fake.date_time_between_dates(
+            datetime_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
+            datetime_end=publish_at or datetime(2022, 10, 12, tzinfo=timezone.utc),
+            tzinfo=timezone.utc,
+        )
         general_posts.append(
             Post(
+                created=created,
                 author=user,
                 title=title,
                 slug=slug,
@@ -83,11 +109,7 @@ def generate_data(user, image_category, post_categories):
                 content=fake.post("medium"),
                 is_public=True,
                 is_published=True,
-                publish_at=fake.date_time_between_dates(
-                    datetime_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
-                    datetime_end=datetime(2022, 10, 12, tzinfo=timezone.utc),
-                    tzinfo=timezone.utc,
-                ),
+                publish_at=publish_at,
             )
         )
     Post.objects.bulk_create(general_posts, batch_size=500, ignore_conflicts=True)
