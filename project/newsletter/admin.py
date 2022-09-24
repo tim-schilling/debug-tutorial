@@ -29,6 +29,7 @@ class PostAdmin(admin.ModelAdmin):
     search_fields = ["title", "slug", "content"]
     ordering = ["-created"]
     raw_id_fields = ["author"]
+    readonly_fields = ["created", "updated"]
 
     @admin.decorators.display(description="Categories")
     def categories_list(self, obj):
@@ -46,6 +47,7 @@ class SubscriptionAdmin(admin.ModelAdmin):
     list_select_related = ["user"]
     search_fields = ["categories__title", "user__username", "user__email"]
     raw_id_fields = ["user"]
+    readonly_fields = ["created", "updated"]
 
     @admin.decorators.display(description="Categories")
     def categories_list(self, obj):
@@ -61,6 +63,7 @@ class SubscriptionNotificationAdmin(admin.ModelAdmin):
     list_display = ["user_email", "post", "sent", "created"]
     list_select_related = ["subscription__user", "post"]
     raw_id_fields = ["post", "subscription"]
+    readonly_fields = ["created", "updated"]
 
     @admin.decorators.display(ordering="subscription__user__email")
     def user_email(self, obj):
