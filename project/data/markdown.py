@@ -51,9 +51,11 @@ def generate_data(user, image_category, post_categories):
         )
         created = fake.date_time_between_dates(
             datetime_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
-            datetime_end=publish_at or datetime(2022, 10, 12, tzinfo=timezone.utc),
+            datetime_end=datetime(2022, 10, 12, tzinfo=timezone.utc),
             tzinfo=timezone.utc,
         )
+        if publish_at and publish_at < created:
+            created = publish_at
         image_posts.append(
             Post(
                 created=created,
@@ -96,9 +98,11 @@ def generate_data(user, image_category, post_categories):
         )
         created = fake.date_time_between_dates(
             datetime_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
-            datetime_end=publish_at or datetime(2022, 10, 12, tzinfo=timezone.utc),
+            datetime_end=datetime(2022, 10, 12, tzinfo=timezone.utc),
             tzinfo=timezone.utc,
         )
+        if publish_at and publish_at < created:
+            created = publish_at
         general_posts.append(
             Post(
                 created=created,

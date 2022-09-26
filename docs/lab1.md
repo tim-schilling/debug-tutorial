@@ -184,9 +184,9 @@ order of most recent to oldest, but they appear jumbled.
 To reproduce:
 1. Browse to the [list posts](http://127.0.0.1:8000/p/) view.
 1. The dates are ordered from most recent to oldest, but posts such as
-   "Deal group admit assume contain fall free." and "Example become
-   begin wish painting economic." appear out of order in comparison to "Skill fight
-   girl north production thus a." and "Win effect bit series."
+   "Example become begin wish painting economic."
+   appears out of order in comparison to "Us available might buy focus
+   hit room." and "Conference sound item affect."
 1. "It doesn't work!"
 
 ### Facts
