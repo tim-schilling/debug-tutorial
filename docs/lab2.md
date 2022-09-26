@@ -22,7 +22,14 @@ To reproduce:
 1. Why are these slow?
 
 Note, given that we're dealing with SQLite locally, the "slowness" is largely
-imaginary so please play along.
+imaginary so please play along. Additionally the Post detail view has caching.
+The cache can be cleared by opening a Django shell (``python -m manage shell``)
+and running:
+
+```python
+from django.core.cache import cache
+cache.clear()
+```
 
 ### Facts
 
