@@ -191,15 +191,18 @@ class TestSubscription(DataTestCase):
         self.assertEqual(Subscription.objects.for_user(self.data.author), None)
 
     def test_needs_notifications_sent(self):
-        user = User.objects.create_user(username="needs_notifications_sent")
+        user = User.objects.create_user(
+            username="needs_notifications_sent",
+            date_joined=timezone.now() - timedelta(minutes=2),
+        )
         subscription = Subscription.objects.create(user=user)
         subscription.categories.set([self.data.social])
-        # The post must be created after the user.
         post = Post.objects.create(
             author=self.data.author,
             title="Needs notifications",
             slug="needs-notifications",
             content="content",
+            publish_at=timezone.now() - timedelta(minutes=1),
         )
         post.categories.set([self.data.social])
         self.assertTrue(
