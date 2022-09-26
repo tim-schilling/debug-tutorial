@@ -37,7 +37,7 @@ def short_photo_update():
 
 def generate_data(user, image_category, post_categories):
     image_posts = []
-    for i in range(20000):
+    for i in range(5000):
         title = fake.sentence()
         slug = slugify(title) + f"-{fake.pyint(10, 99999)}"
         publish_at = (

@@ -12,7 +12,7 @@ fake = Faker()
 # Seed the randomization to support consistent randomization.
 Faker.seed(2022)
 
-USER_COUNT = 300
+USER_COUNT = 100
 
 
 def generate_data(categories: CategoryData):
