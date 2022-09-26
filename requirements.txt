@@ -12,7 +12,7 @@ backports-zoneinfo==0.2.1 ; python_version < "3.9"
     #   django
 build==0.8.0
     # via pip-tools
-certifi==2022.9.14
+certifi==2022.9.24
     # via requests
 cfgv==3.3.1
     # via pre-commit
@@ -35,13 +35,13 @@ django-anymail==8.6
     # via -r requirements.in
 django-coverage-plugin==2.0.3
     # via -r requirements.in
-django-debug-toolbar==3.6.0
+django-debug-toolbar==3.7.0
     # via -r requirements.in
 django-environ==0.9.0
     # via -r requirements.in
 django-registration-redux==2.11
     # via -r requirements.in
-faker==14.2.0
+faker==14.2.1
     # via
     #   -r requirements.in
     #   mdgen
@@ -85,7 +85,7 @@ six==1.16.0
     # via
     #   django-coverage-plugin
     #   python-dateutil
-sqlparse==0.4.2
+sqlparse==0.4.3
     # via
     #   django
     #   django-debug-toolbar
