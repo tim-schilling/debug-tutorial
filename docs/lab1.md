@@ -17,7 +17,7 @@ The detail view for the post "Unit bar pressure." is broken.
 
 To reproduce:
 1. Browse to the [posts page](http://127.0.0.1:8000/p/).
-1. Click on "Read" for the post with the title "Learn along sit apply adult."
+1. Click on "Read" for the post with the title "Skill fight girl north production thus a."
 1. "It doesn't work!"
 
 ### Facts
@@ -28,7 +28,7 @@ Let's consider what we know:
   QuerySet does not contain a Post matching the filters.
 - The line that causes the error is on line 80:``post = posts.get(title=lookup)``
 - We know the post exists, we can find it in the
-  [admin](http://127.0.0.1:8000/admin/newsletter/post/?title=Learn+along+sit+apply+adult.)
+  [admin](http://127.0.0.1:8000/admin/newsletter/post/?title=Skill+fight+girl+north+production+thus+a.)
 - This impacts more than just the post in the report. The detail
   view is broken for all posts.
 
@@ -184,9 +184,9 @@ order of most recent to oldest, but they appear jumbled.
 To reproduce:
 1. Browse to the [list posts](http://127.0.0.1:8000/p/) view.
 1. The dates are ordered from most recent to oldest, but posts such as
-   "Example become begin wish painting economic." and "Star onto receive
-   human buy four." appear out of order in comparison to "Skill fight
-   girl north production thus a." and "Conference sound item affect."
+   "Deal group admit assume contain fall free." and "Example become
+   begin wish painting economic." appear out of order in comparison to "Skill fight
+   girl north production thus a." and "Win effect bit series."
 1. "It doesn't work!"
 
 ### Facts
@@ -207,7 +207,7 @@ The posts are being ordered correctly, ``publish_at`` first, falling back to
 ``created`` when unset. Therefore the template must be rendering incorrectly.
 This can be confirmed by comparing the fields of the posts that render
 [correctly](http://127.0.0.1:8000/admin/newsletter/post/?slug=skill-fight-girl-north-production-thus-a-58113)
-and [incorrectly](http://127.0.0.1:8000/admin/newsletter/post/?slug=example-become-begin-wish-painting-economic-21805).
+and [incorrectly](http://127.0.0.1:8000/admin/newsletter/post/?slug=deal-group-admit-assume-contain-fall-free-5224).
 From the admin, we can see the correctly rendering Post does not have a value
 for ``publish_at``, while the incorrectly rendering Post does have a value
 for ``publish_at``. We can see that the ``publish_at`` value is significantly
