@@ -91,10 +91,7 @@
     }
     const csrfmiddlewaretoken = document.querySelector('[name=csrfmiddlewaretoken]').value
     $(function() {
-      // Set the language if it's not already set.
-      if (!getCookie('django_language')) {
-        $.post("{% url 'set_language' %}", {csrfmiddlewaretoken})
-      }
+      // Page on load.
     });
   </script>
   {% block js %}{% endblock %}
