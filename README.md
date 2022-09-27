@@ -22,6 +22,20 @@ find the last known good version, then compare what doesn't work. That
 is very easy to do in this environment, but I strongly suggest that you
 don't do that unless you're stuck.
 
+## How the Labs will work
+
+There are a total of 7 labs, numbered 1.1-1.3, 2.1-2.4 (it made sense at
+the time). Each is structured with a Report, a set of Facts, an
+Investigation section, a Conclusion and finally Further Consideration.
+
+I suggest using the Investigation section, but if you'd like to avoid any
+hints in your debugging effort then stop reading after the Report and Facts
+sections.
+
+The Conclusion section will have the solution(s) while Further Consideration
+is reserved for asking you to reflect on your own projects.
+
+
 ## Getting Setup
 
 This section will provide you with the minimal setup for this tutorial.
