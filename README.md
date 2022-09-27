@@ -51,6 +51,7 @@ it works, go for it! Do what you're most comfortable.
 
 
 ---
+
 ### Windows warning
 
 If you are comfortable on Windows with Python and have setup multiple projects, ignore this
@@ -60,6 +61,7 @@ If not, I highly recommend using the Windows Subsystem for Linux
 ([docs](https://learn.microsoft.com/en-us/windows/wsl/about)). If you do, the
 rest of the instructions will work for you. If you don't have access to that
 please scroll down to [Windows non-WSL Setup](#windows-non-wsl-setup).
+
 ---
 
 1. From the terminal, create a virtual environment. ([venv docs](https://docs.python.org/3/library/venv.html#venv-def))
