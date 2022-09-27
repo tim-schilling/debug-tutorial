@@ -184,9 +184,10 @@ order of most recent to oldest, but they appear jumbled.
 To reproduce:
 1. Browse to the [list posts](http://127.0.0.1:8000/p/) view.
 1. The dates are ordered from most recent to oldest, but posts such as
-   "Example become begin wish painting economic."
-   appears out of order in comparison to "Us available might buy focus
-   hit room." and "Conference sound item affect."
+   "Campaign expect page information wrong more." and "Example
+   become begin wish painting economic."
+   appear out of order in comparison to "Skill fight girl north
+   production thus a." and "New star by chair environmental family Congress degree."
 1. "It doesn't work!"
 
 ### Facts
@@ -207,7 +208,7 @@ The posts are being ordered correctly, ``publish_at`` first, falling back to
 ``created`` when unset. Therefore the template must be rendering incorrectly.
 This can be confirmed by comparing the fields of the posts that render
 [correctly](http://127.0.0.1:8000/admin/newsletter/post/?slug=skill-fight-girl-north-production-thus-a-58113)
-and [incorrectly](http://127.0.0.1:8000/admin/newsletter/post/?slug=deal-group-admit-assume-contain-fall-free-5224).
+and [incorrectly](http://127.0.0.1:8000/admin/newsletter/post/?slug=campaign-expect-page-information-wrong-more-8656).
 From the admin, we can see the correctly rendering Post does not have a value
 for ``publish_at``, while the incorrectly rendering Post does have a value
 for ``publish_at``. We can see that the ``publish_at`` value is significantly
@@ -235,3 +236,11 @@ that some part of the code must contain an error. Was there a time when you
 incorrectly assumed a bug could not be in a component only to find that your
 assumption was wrong? Why were you so confident in that assumption? How can
 you learn to hold these opinions more loosely in the future?
+
+
+---
+
+Good work!
+
+I hope you were able to find something to take away from
+this lab. Proceed to [Lab 2](docs/lab2.md).
