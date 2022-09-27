@@ -2,6 +2,7 @@ import logging
 from contextlib import contextmanager
 
 from django.core.management.base import BaseCommand
+from django.utils import timezone
 
 from project.data import (
     author,
@@ -16,9 +17,11 @@ logger = logging.getLogger(__name__)
 
 @contextmanager
 def log(event):
+    start = timezone.now()
     logger.info(f"{event} - start")
     yield
-    logger.info(f"{event} - end")
+    end = timezone.now()
+    logger.info(f"{event} - end, {(end-start).total_seconds()}s")
 
 
 class Command(BaseCommand):
