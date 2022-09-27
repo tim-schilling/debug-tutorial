@@ -118,7 +118,7 @@ the boring stuff, let's get to the dopamine rushes. I mean the bugs.
 Proceed to [Lab 1](docs/lab1.md).
 
 
-## Windows non-WSL Setup {#windows-non-wsl-setup}
+## Windows non-WSL Setup
 
 1. From the command prompt, create a virtual environment.
    ```shell
