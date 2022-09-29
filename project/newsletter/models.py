@@ -101,7 +101,7 @@ class PostQuerySet(models.QuerySet):
             is_unread=Exists(
                 SubscriptionNotification.objects.filter(
                     post_id=OuterRef("id"),
-                    subscription__user=user,
+                    subscription__user=user.username,
                     sent__isnull=False,
                     read__isnull=True,
                 )
