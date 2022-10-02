@@ -170,9 +170,9 @@ MARTOR_THEME = "semantic"
 MARTOR_UPLOAD_PATH = "images/uploads/"
 MARTOR_UPLOAD_URL = reverse_lazy("newsletter:markdown_uploader")
 
-MARTOR_ALTERNATIVE_SEMANTIC_JS_FILE = "dist/fomantic-ui-2.8.8.semantic.min.js"
-MARTOR_ALTERNATIVE_SEMANTIC_CSS_FILE = "dist/fomantic-ui-2.8.8.semantic.min.css"
-MARTOR_ALTERNATIVE_JQUERY_JS_FILE = "dist/jquery.min.js"
+MARTOR_ALTERNATIVE_SEMANTIC_JS_FILE = "fomantic/fomantic-ui-2.8.8.semantic.min.js"
+MARTOR_ALTERNATIVE_SEMANTIC_CSS_FILE = "fomantic/fomantic-ui-2.8.8.semantic.min.css"
+MARTOR_ALTERNATIVE_JQUERY_JS_FILE = "fomantic/jquery.min.js"
 
 
 # Test settings
