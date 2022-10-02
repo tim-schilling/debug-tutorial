@@ -73,11 +73,12 @@ post = posts.get(title=lookup)
 This view uses ``post = posts.get(...)`` to fetch a single instance. When
 that doesn't exist, it's resulting in an uncaught exception which causes a 500
 error. Instead we should use ``post = get_object_or_404(posts, ...)`` to get a
-more friendly and less noisy 404 response. But, consider this error report if
-that's how the code worked; we wouldn't have an error message or a stacktrace.
-We simply would see that the view says the Post doesn't when we know it does.
+more friendly and less noisy 404 response. But consider what this error report
+would look like if that's how the code worked; we wouldn't have an error message
+or a stacktrace. We simply would see that the view is returning our HTTP 404 template
+implying the Post doesn't exist when we know it does.
 
-What I'd like you think about for a minute is how would you approach this problem
+What I'd like you to think about for a minute is how would you approach this problem
 in that scenario (the view is returning a 404 response when it shouldn't)?
 
 
@@ -110,20 +111,20 @@ To reproduce:
 Let's consider what we know:
 
 - The form is hitting the correct view and is using the form class we
-  expect since the post created with non-file data.
+  expect since the post is created with the non-file fields.
 
 
 ### Investigation
 
 - Does the file show up on the server side?
-  - Using debugger, a ``breakpoint()`` line or a print statement, inspect
+  - Using the IDE's debugger, a ``breakpoint()`` line or a print statement, inspect
     [``request.FILES``](https://docs.djangoproject.com/en/4.1/ref/request-response/#django.http.HttpRequest.FILES).
   - Are there any files included? Is ``"open_graph_image"`` a key?
 - Is the file being sent from the browser to the server?
   - We can use the browser's Developer Tool's Network panel to inspect the request.
-  - Browse to the create view.
+  - Browse to the [create view](http://127.0.0.1:8000/post/create/).
   - Open the developer tools, click on the networking panel.
-  - Submit the form.
+  - Populate and submit the form.
   - Look for the image content in the request.
   - What value is being sent? Does it look like a file or the name of the file?
 - Can we create a Post with an Open graph image [in the admin](http://127.0.0.1:8000/admin/newsletter/post/add/)?
@@ -215,15 +216,14 @@ for ``publish_at``. We can see that the ``publish_at`` value is significantly
 more recent than the ``created`` value which explains why it appears in the
 list of posts at the top.
 
-We can also infer that it means that since the ``publish_at`` is the value
-causes the Post to appear near the top of list of Posts, that it should also
-be the value used to render the datetime string.
+We can also infer that since the ``publish_at`` is the ``order_by`` value,
+that it should also be the value used when rendering the datetime string.
 
 Now we know that the template is likely using the ``created`` field to render
 the datetime string when it shouldn't be. However, the template that's used
 to render the individual posts doesn't contain ``post.created`` explicitly.
-We do see that there's a custom template tag that's rendering the datetime
-called ``nice_datetime``. Looking at that code, we indeed see the
+But we do see that there's a custom template tag that's rendering the datetime
+called ``nice_datetime``. Looking at that code, we indeed find the
 ``timestamp`` variable being set to the value of ``post.created`` when it
 should be ``post.publish_date``.
 
@@ -243,4 +243,4 @@ you learn to hold these opinions more loosely in the future?
 Good work!
 
 I hope you were able to find something to take away from
-this lab. Proceed to [Lab 2](docs/lab2.md).
+this lab. Proceed to [Lab 2](lab2.md).

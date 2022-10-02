@@ -44,8 +44,8 @@ Let's consider what we know:
 
 - What queries are running?
   - Use the Django Debug Toolbar's SQL Panel
-  - The count should be relatively low, we're only rendering one type of
-    data on the page.
+  - In a properly working case, the count should be relatively low, we're only rendering
+    one type of data on the page. How many do we see?
 - Should a query be using an index?
   - Fields that are likely to qualify for indexes are those that are used in
     filtering and ordering.
@@ -238,17 +238,17 @@ git checkout lab-2.3
 ### Report
 
 I think the analytics view is broken. The values don't match what I'd expect
-to see, can look into them?
+to see, can you look into them?
 
 To reproduce:
 1. Browse to the [analytics page](http://127.0.0.1:8000/analytics/).
-1. It's broken.
+1. It doesn't work.
 
 ### Facts
 
 Let's consider what we know:
 
-- The page was rendering correctly but the data may be wrong.
+- The page is rendering correctly but the data may be wrong.
 - It's unknown if this was ever working correctly, but it certainly is wrong now.
 
 
@@ -301,7 +301,7 @@ Let's consider what we know:
     row causing the ``Count`` function to find more than one, leading to an inflated
     count.
   - This can be fixed by using an appropriate ``GROUP BY`` clause in the SQL.
-  - What does the Django ORM's ``Count`` expression offer in terms of parameters.
+  - What does the Django ORM's ``Count`` expression offer in terms of parameters?
     - You can use the [docs](https://docs.djangoproject.com/en/4.1/ref/models/querysets/#id9)
       or inspect [the code](https://github.com/django/django/blob/stable/4.1.x/django/db/models/aggregates.py#L145-L149)
       (right click on ``Count`` and choose "Go To Definition") in
