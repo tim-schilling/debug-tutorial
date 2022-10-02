@@ -146,7 +146,7 @@ Proceed to [Lab 1](docs/lab1.md).
    ```
 1. Install the project dependencies.
    ```shell
-   pip3 install -r requirements.txt
+   pip install -r requirements.txt
    ```
 1. Create a new .env file.
    ```shell
@@ -156,24 +156,24 @@ Proceed to [Lab 1](docs/lab1.md).
    change the ``SECRET_KEY`` value in your ``.env`` file.
 1. Create the database for the project.
    ```shell
-   python3 -m manage migrate
+   python -m manage migrate
    ```
 1. Verify the tests currently pass, if they don't and you're not sure why,
    please ask.
    ```shell
-   python3 -m manage test
+   python -m manage test
    ```
 1. Create the fake data. This will take a few minutes.
    ```shell
-   python3 -m manage fake_data
+   python -m manage fake_data
    ```
 1. Create your own super user account. Follow the prompts.
    ```shell
-   python3 -m manage createsuperuser
+   python -m manage createsuperuser
    ```
 1. Run the development web server.
    ```shell
-   python3 -m manage runserver
+   python -m manage runserver
    ```
 1. Verify the following pages load:
    * http://127.0.0.1:8000/
