@@ -155,7 +155,7 @@ understand how HTML encodes forms/data or have a discerning eye to compare the
 two forms and spot the differences then experiment to identify which of those
 differences is the cause of the problem.
 
-Knowing the what the ``enctype`` attribute does will always be faster
+Knowing what the ``enctype`` attribute does will always be faster
 than investigative trial and error, but the skills used in that investigative
 trial and error can be reused on other problems.
 

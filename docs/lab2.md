@@ -274,12 +274,12 @@ Let's consider what we know:
           ).count()
       )
       ```
-  - Use the SQLite browser by opening the file directly.
+  - Use the SQLite browser by opening the file directly (you must have SQLite already installed).
     ```sqlite
     SELECT COUNT(*) FROM newsletter_post WHERE created >= date('now','-180 day');
     SELECT COUNT(*) FROM newsletter_subscription WHERE created >= date('now','-180 day');
     ```
-  - Open a SQLite shell with ``python -m manage dbshell``.
+  - Open a SQLite shell with ``python -m manage dbshell``  (you must have SQLite already installed).
     ```sqlite
     SELECT COUNT(*) FROM newsletter_post WHERE created >= date('now','-180 day');
     SELECT COUNT(*) FROM newsletter_subscription WHERE created >= date('now','-180 day');
