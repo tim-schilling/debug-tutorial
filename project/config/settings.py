@@ -235,3 +235,12 @@ LOGGING = {
         },
     },
 }
+
+
+# Django Debug Toolbar on Windows hack
+# https://stackoverflow.com/a/16355034/1637351
+# This really should be done by the user in their windows registry.
+if DEBUG:
+    import mimetypes
+
+    mimetypes.add_type("text/javascript", ".js", True)
