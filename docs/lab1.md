@@ -95,7 +95,7 @@ git checkout lab-1.2
 
 ### Report
 
-Creating posts is broken. The the open graph image doesn't get uploaded!
+Creating posts is broken. The open graph image doesn't get uploaded!
 
 
 To reproduce:
