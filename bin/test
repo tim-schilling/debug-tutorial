@@ -1,0 +1,13 @@
+#!/bin/bash
+
+branches=$(eval "git branch | grep 'lab' | xargs")
+
+git checkout main
+for branch in $branches
+do
+  echo "Testing branch ${branch}"
+  eval "git checkout ${branch}"
+  python manage.py test
+  python manage.py test --tag lab_test
+done
+git checkout main

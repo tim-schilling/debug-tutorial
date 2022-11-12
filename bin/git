@@ -1,0 +1,13 @@
+#!/bin/bash
+
+# To rebase on main, run:
+# ./bin/git 'rebase main'
+
+branches=$(eval "git branch | grep 'lab' | xargs")
+
+git checkout main
+for branch in $branches
+do
+  eval "git $1 ${branch}"
+done
+git checkout main
