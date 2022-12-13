@@ -6,6 +6,9 @@ and the time you spend in the future on this tutorial.
 The purpose of this tutorial is to expose you to some of the tools
 available to you as a Djangonaut to aid you in your debugging adventures.
 
+If you didn't attend the talk or would like to view the slides, [you
+can find them here](https://docs.google.com/presentation/d/1dmeFD5kGsukQaMinU0BJQyyCeu5ZGR4drc0pJilT10Y/edit?usp=share_link).
+
 ## Preamble to the setup
 
 This tutorial is written to give you the experience of working on a real
