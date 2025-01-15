@@ -45,7 +45,7 @@ This section will provide you with the minimal setup for this tutorial.
 If you have a preference on setting up a project differently and know that
 it works, go for it! Do what you're most comfortable.
 
-1. Have Python 3.8+ installed. My assumption is that you have your own
+1. Have Python 3.11+ installed. My assumption is that you have your own
    setup decided upon. However, if you're unsure where to go for
    this, I'd recommend using https://www.python.org/downloads/ for today.
 1. From the terminal or command prompt, clone the project.
