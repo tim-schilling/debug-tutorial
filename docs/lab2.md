@@ -17,7 +17,7 @@ The site seems to be running slower lately. Please make the site fast again!
 
 To reproduce:
 1. Browse to the [posts page](http://127.0.0.1:8000/p/).
-1. Browse to a [post's page](http://127.0.0.1:8000/p/skill-fight-girl-north-production-thus-a-58113/).
+1. Browse to a [post's page](http://127.0.0.1:8000/p/author-up-language-push-162/).
 1. Browse to the [posts admin page](http://127.0.0.1:8000/admin/newsletter/post/).
 1. Why are these slow?
 
@@ -344,8 +344,8 @@ Thank you for adding caching to the site recently, but I think you broke somethi
 A post that shouldn't be public is available to the public now.
 
 To reproduce:
-1. Log into your staff account and browse to the [published posts](http://127.0.0.1:8000/p/skill-fight-girl-north-production-thus-a-58113/).
-1. Use an incognito window to also view the [published posts](http://127.0.0.1:8000/p/skill-fight-girl-north-production-thus-a-58113/).
+1. Log into your staff account and browse to the [published posts](http://127.0.0.1:8000/p/).
+1. Use an incognito window to also view the [published posts](http://127.0.0.1:8000/p/).
 1. In the incognito window, click to read a post.
 1. In the staff authenticated window, click "Set to private" for the post opened
    in the incognito window.

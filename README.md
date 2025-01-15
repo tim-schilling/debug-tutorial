@@ -125,7 +125,7 @@ please scroll down to [Windows non-WSL Setup](#windows-non-wsl-setup).
 1. Verify the following pages load:
    * http://127.0.0.1:8000/
    * http://127.0.0.1:8000/p/
-   * http://127.0.0.1:8000/p/skill-fight-girl-north-production-thus-a-58113/
+   * http://127.0.0.1:8000/p/author-up-language-push-162/
 1. Log into the admin ([link](http://127.0.0.1:8000/admin/)) with your super user.
 1. Verify the following pages load:
    * http://127.0.0.1:8000/post/create/
@@ -181,7 +181,7 @@ Proceed to [Lab 1](docs/lab1.md).
 1. Verify the following pages load:
    * http://127.0.0.1:8000/
    * http://127.0.0.1:8000/p/
-   * http://127.0.0.1:8000/p/skill-fight-girl-north-production-thus-a-58113/
+   * http://127.0.0.1:8000/p/author-up-language-push-162/
 1. Log into the admin ([link](http://127.0.0.1:8000/admin/)) with your super user.
 1. Verify the following pages load:
    * http://127.0.0.1:8000/post/create/
