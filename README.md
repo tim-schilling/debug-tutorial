@@ -58,7 +58,9 @@ it works, go for it! Do what you're most comfortable.
    ```
    If you don't have git installed, you can
    [download the zip file](https://github.com/tim-schilling/debug-tutorial/archive/refs/heads/main.zip)
-   and unpack it.
+   and unpack it. Be aware, though, that you won't be able to complete some
+   of the instructions in the lab without access to the git history. Cloning
+   the repo is recommended.
 1. Change into project directory
    ```shell
    cd debug-tutorial
