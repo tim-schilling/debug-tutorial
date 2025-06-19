@@ -118,7 +118,7 @@ Let's consider what we know:
 
 - Does the file show up on the server side?
   - Using the IDE's debugger, a ``breakpoint()`` line or a print statement, inspect
-    [``request.FILES``](https://docs.djangoproject.com/en/4.1/ref/request-response/#django.http.HttpRequest.FILES).
+    [``request.FILES``](https://docs.djangoproject.com/en/stable/ref/request-response/#django.http.HttpRequest.FILES).
   - Are there any files included? Is ``"open_graph_image"`` a key?
 - Is the file being sent from the browser to the server?
   - We can use the browser's Developer Tool's Network panel to inspect the request.
