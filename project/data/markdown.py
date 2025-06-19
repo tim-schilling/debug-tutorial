@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import timezone
 from itertools import cycle
 
 from faker import Faker
@@ -7,6 +7,7 @@ from mdgen import MarkdownPostProvider
 from mdgen.core import MarkdownImageGenerator
 
 from project.newsletter.models import Post
+from project.data import dates
 
 fake = Faker()
 fake.add_provider(MarkdownPostProvider)
@@ -41,19 +42,11 @@ def generate_data(user, image_category, post_categories):
         title = fake.sentence()
         slug = slugify(title) + f"-{fake.pyint(10, 99999)}"
         publish_at = (
-            fake.date_time_between_dates(
-                datetime_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
-                datetime_end=datetime(2022, 10, 12, tzinfo=timezone.utc),
-                tzinfo=timezone.utc,
-            )
+            dates.fake_date()
             if fake.pybool()
             else None
         )
-        created = fake.date_time_between_dates(
-            datetime_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
-            datetime_end=datetime(2022, 10, 12, tzinfo=timezone.utc),
-            tzinfo=timezone.utc,
-        )
+        created = dates.fake_date()
         if publish_at and publish_at < created:
             created = publish_at
         image_posts.append(
@@ -88,19 +81,11 @@ def generate_data(user, image_category, post_categories):
         title = fake.sentence()
         slug = slugify(title) + f"-{fake.pyint(10, 9999)}"
         publish_at = (
-            fake.date_time_between_dates(
-                datetime_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
-                datetime_end=datetime(2022, 10, 12, tzinfo=timezone.utc),
-                tzinfo=timezone.utc,
-            )
+            dates.fake_date()
             if fake.pybool()
             else None
         )
-        created = fake.date_time_between_dates(
-            datetime_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
-            datetime_end=datetime(2022, 10, 12, tzinfo=timezone.utc),
-            tzinfo=timezone.utc,
-        )
+        created = dates.fake_date()
         if publish_at and publish_at < created:
             created = publish_at
         general_posts.append(
@@ -130,7 +115,7 @@ def generate_data(user, image_category, post_categories):
         ignore_conflicts=True,
     )
 
-    last_post = Post.objects.filter(is_published=True, is_public=True).latest('publish_at')
+    last_post = Post.objects.published().recent_first().first()
     last_post.slug = 'extraordinary-things-happen-all-over-123456'
     last_post.title = "120 year old points out extraordinary things happen everywhere"
     last_post.save()

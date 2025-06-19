@@ -1,10 +1,11 @@
 from collections import OrderedDict
-from datetime import datetime, timezone
+from datetime import timezone
 from functools import partial
 
 from django.contrib.auth.models import User
 from faker import Faker
 
+from project.data import dates
 from project.data.category import CategoryData
 from project.newsletter.models import Subscription
 
@@ -24,11 +25,7 @@ def generate_data(categories: CategoryData):
                 f"{user.first_name}.{user.last_name}.{fake.pyint(max_value=999)}"
             )
             user.email = f"{user.username}@example.com"
-            user.date_joined = fake.date_time_between_dates(
-                datetime_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
-                datetime_end=datetime(2022, 10, 12, tzinfo=timezone.utc),
-                tzinfo=timezone.utc,
-            )
+            user.date_joined = dates.fake_date()
             users.append(user)
         User.objects.bulk_create(users, ignore_conflicts=True)
     user_ids = (
@@ -49,11 +46,7 @@ def generate_data(categories: CategoryData):
 
     for i in range(0, USER_COUNT, 50):
         created_map = {
-            user_id: fake.date_time_between_dates(
-                datetime_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
-                datetime_end=datetime(2022, 10, 12, tzinfo=timezone.utc),
-                tzinfo=timezone.utc,
-            )
+            user_id: dates.fake_date()
             for user_id in user_ids[i : i + 50]
         }
         Subscription.objects.bulk_create(
