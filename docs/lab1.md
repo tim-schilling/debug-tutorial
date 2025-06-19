@@ -13,11 +13,11 @@ git checkout lab-1.1
 
 ### Report
 
-The detail view for the post "Author up language push." is broken.
+The detail view for the post "120 year old points out extraordinary things happen everywhere" is broken.
 
 To reproduce:
 1. Browse to the [posts page](http://127.0.0.1:8000/p/).
-1. Click on "Read" for the post with the title "Author up language push."
+1. Click on "Read" for the post with the title "120 year old points out extraordinary things happen everywhere"
 1. "It doesn't work!"
 
 ### Facts
@@ -28,7 +28,7 @@ Let's consider what we know:
   QuerySet does not contain a Post matching the filters.
 - The line that causes the error is on line 80:``post = posts.get(title=lookup)``
 - We know the post exists, we can find it in the
-  [admin](http://127.0.0.1:8000/admin/newsletter/post/?q=Author+up+language+push.)
+  [admin](http://127.0.0.1:8000/admin/newsletter/post/?q=120+year+old+points+out+extraordinary+things+happen+everywhere)
 - This impacts more than just the post in the report. The detail
   view is broken for all posts.
 

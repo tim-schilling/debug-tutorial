@@ -17,7 +17,7 @@ The site seems to be running slower lately. Please make the site fast again!
 
 To reproduce:
 1. Browse to the [posts page](http://127.0.0.1:8000/p/).
-1. Browse to a [post's page](http://127.0.0.1:8000/p/author-up-language-push-162/).
+1. Browse to a [post's page](http://127.0.0.1:8000/p/extraordinary-things-happen-all-over-123456/).
 1. Browse to the [posts admin page](http://127.0.0.1:8000/admin/newsletter/post/).
 1. Why are these slow?
 

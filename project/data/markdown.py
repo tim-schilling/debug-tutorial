@@ -129,3 +129,8 @@ def generate_data(user, image_category, post_categories):
         batch_size=500,
         ignore_conflicts=True,
     )
+
+    last_post = Post.objects.filter(is_published=True, is_public=True).latest('publish_at')
+    last_post.slug = 'extraordinary-things-happen-all-over-123456'
+    last_post.title = "120 year old points out extraordinary things happen everywhere"
+    last_post.save()
