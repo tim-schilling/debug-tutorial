@@ -185,10 +185,9 @@ order of most recent to oldest, but they appear jumbled.
 To reproduce:
 1. Browse to the [list posts](http://127.0.0.1:8000/p/) view.
 1. The dates are ordered from most recent to oldest, but posts such as
-   "Campaign expect page information wrong more." and "Example
-   become begin wish painting economic."
-   appear out of order in comparison to "Skill fight girl north
-   production thus a." and "New star by chair environmental family Congress degree."
+   "Similar home dinner great." and "Human easy financial."
+   appear out of order in comparison to "Blue available option nor thought 
+   image six." and "Crime government live past significant vote."
 1. "It doesn't work!"
 
 ### Facts
