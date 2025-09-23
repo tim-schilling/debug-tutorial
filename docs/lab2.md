@@ -201,6 +201,8 @@ Let's consider what we know:
 - Are the queries running in a reasonable amount of time?
 - Is there a section of code that's running slowly?
   - Enable the Profiling panel and refresh the page.
+    - You may need to increase the value of ``PROFILER_THRESHOLD_RATIO`` in the
+      settings.py file to find the culprit in ``project/newsletter/views.py``.
   - If the slowness isn't obviously from the SQL panel, we need to see where time
     is being spent in the application.
   - Look for long durations or a high number of iterations.
