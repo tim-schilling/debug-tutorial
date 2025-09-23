@@ -28,7 +28,7 @@ Let's consider what we know:
   QuerySet does not contain a Post matching the filters.
 - The line that causes the error is on line 80:``post = posts.get(title=lookup)``
 - We know the post exists, we can find it in the
-  [admin](http://127.0.0.1:8000/admin/newsletter/post/?q=Author+up+language+push.)
+  [admin](http://127.0.0.1:8000/admin/newsletter/post/?q=Term+writer+recognize+race+available.)
 - This impacts more than just the post in the report. The detail
   view is broken for all posts.
 
