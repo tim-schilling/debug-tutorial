@@ -1,7 +1,7 @@
 
 # Lab 2
 
-Let's kick it up a notch with some [Django Debug Toolbar](https://github.com/jazzband/django-debug-toolbar/)!
+Let's kick it up a notch with some [Django Debug Toolbar](https://github.com/django-commons/django-debug-toolbar/)!
 
 ## Lab 2.1
 
@@ -17,7 +17,7 @@ The site seems to be running slower lately. Please make the site fast again!
 
 To reproduce:
 1. Browse to the [posts page](http://127.0.0.1:8000/p/).
-1. Browse to a [post's page](http://127.0.0.1:8000/p/author-up-language-push-162/).
+1. Browse to a [post's page](http://127.0.0.1:8000/p/term-writer-recognize-race-available-5291/).
 1. Browse to the [posts admin page](http://127.0.0.1:8000/admin/newsletter/post/).
 1. Why are these slow?
 
@@ -62,14 +62,14 @@ is a never ending, relentless battle.
 
 #### Post listing admin
 The admin page suffers from a [N+1 problem](https://ddg.gg?q=N%2B1+django) and
-needs to make use of [``prefetch_related``](https://docs.djangoproject.com/en/4.1/ref/models/querysets/#django.db.models.query.QuerySet.prefetch_related)
+needs to make use of [``prefetch_related``](https://docs.djangoproject.com/en/stable/ref/models/querysets/#django.db.models.query.QuerySet.prefetch_related)
 since it renders each category of the post on the page. This can be chained on
 the QuerySet by overriding ``ModelAdmin.get_queryset``. The need for
 ``prefetch_related`` is evident from the 100 duplicated queries that are fetching data from the table
 ``newsletter_post_categories``. That table is the intermediate table used with
 a ``models.ManyToManyField``. There is a slight wrinkle in that the categories
 are being rendered in order of the categories' titles. In order to push that
-to the database, you must use a [``Prefetch``](https://docs.djangoproject.com/en/4.1/ref/models/querysets/#django.db.models.Prefetch)
+to the database, you must use a [``Prefetch``](https://docs.djangoproject.com/en/stable/ref/models/querysets/#django.db.models.Prefetch)
  object that specifies:
 
 ```python
@@ -164,7 +164,7 @@ squeeze all the speedy goodness out of the application.
 
 That said, consider the application(s) you work on. What are the most
 frequently used parts? What do you have in place to catch slowness?
-Could you benefit from using [``assertNumQueries(...)``](https://docs.djangoproject.com/en/4.1/topics/testing/tools/#django.test.TransactionTestCase.assertNumQueries)?
+Could you benefit from using [``assertNumQueries(...)``](https://docs.djangoproject.com/en/stable/topics/testing/tools/#django.test.TransactionTestCase.assertNumQueries)?
 
 
 ## Lab 2.2
@@ -302,7 +302,7 @@ Let's consider what we know:
     count.
   - This can be fixed by using an appropriate ``GROUP BY`` clause in the SQL.
   - What does the Django ORM's ``Count`` expression offer in terms of parameters?
-    - You can use the [docs](https://docs.djangoproject.com/en/4.1/ref/models/querysets/#id9)
+    - You can use the [docs](https://docs.djangoproject.com/en/stable/ref/models/querysets/#id9)
       or inspect [the code](https://github.com/django/django/blob/stable/4.1.x/django/db/models/aggregates.py#L145-L149)
       (right click on ``Count`` and choose "Go To Definition") in
       your IDE if you're using PyCharm or VSCode.

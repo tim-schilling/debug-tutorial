@@ -118,7 +118,7 @@ Let's consider what we know:
 
 - Does the file show up on the server side?
   - Using the IDE's debugger, a ``breakpoint()`` line or a print statement, inspect
-    [``request.FILES``](https://docs.djangoproject.com/en/4.1/ref/request-response/#django.http.HttpRequest.FILES).
+    [``request.FILES``](https://docs.djangoproject.com/en/stable/ref/request-response/#django.http.HttpRequest.FILES).
   - Are there any files included? Is ``"open_graph_image"`` a key?
 - Is the file being sent from the browser to the server?
   - We can use the browser's Developer Tool's Network panel to inspect the request.
@@ -208,8 +208,8 @@ Let's consider what we know:
 The posts are being ordered correctly, ``publish_at`` first, falling back to
 ``created`` when unset. Therefore the template must be rendering incorrectly.
 This can be confirmed by comparing the fields of the posts that render
-[correctly](http://127.0.0.1:8000/admin/newsletter/post/?slug=skill-fight-girl-north-production-thus-a-58113)
-and [incorrectly](http://127.0.0.1:8000/admin/newsletter/post/?slug=campaign-expect-page-information-wrong-more-8656).
+[correctly](http://127.0.0.1:8000/admin/newsletter/post/?slug=hear-after-debate-thousand-medical-give-85694)
+and [incorrectly](http://127.0.0.1:8000/admin/newsletter/post/?slug=add-they-debate-guess-leg-21809).
 From the admin, we can see the correctly rendering Post does not have a value
 for ``publish_at``, while the incorrectly rendering Post does have a value
 for ``publish_at``. We can see that the ``publish_at`` value is significantly
