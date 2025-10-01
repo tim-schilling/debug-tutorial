@@ -17,8 +17,8 @@ The detail view for the post "Term writer recognize race available." is broken.
 
 To reproduce:
 1. Browse to the [posts page](http://127.0.0.1:8000/p/).
-1. Click on "Read" for the post with the title "Term writer recognize race available."
-1. "It doesn't work!"
+2. Click on "Read" for the post with the title "Term writer recognize race available."
+3. "It doesn't work!"
 
 ### Facts
 
