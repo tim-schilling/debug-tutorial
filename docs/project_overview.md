@@ -34,5 +34,5 @@ project. The fields to be aware of are:
 - ``is_public`` - Controls whether an unauthenticated user can view the post on the site.
 - ``is_published`` - Signals that a post is no longer a draft and should be accessible to non-staff users.
 - ``publish_at`` - Allows the author to schedule a post to be published in the future.
-- ``publish_date`` - This is a calculated property that identfies the Post's publish datetime.
+- ``publish_date`` - This is a calculated property that identifies the Post's publish datetime.
   It returns ``publish_at`` if set otherwise ``created``.

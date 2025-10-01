@@ -17,9 +17,9 @@ The site seems to be running slower lately. Please make the site fast again!
 
 To reproduce:
 1. Browse to the [posts page](http://127.0.0.1:8000/p/).
-1. Browse to a [post's page](http://127.0.0.1:8000/p/term-writer-recognize-race-available-5291/).
-1. Browse to the [posts admin page](http://127.0.0.1:8000/admin/newsletter/post/).
-1. Why are these slow?
+2. Browse to a [post's page](http://127.0.0.1:8000/p/term-writer-recognize-race-available-5291/).
+3. Browse to the [posts admin page](http://127.0.0.1:8000/admin/newsletter/post/).
+4. Why are these slow?
 
 Note, given that we're dealing with SQLite locally, the "slowness" is largely
 imaginary so please play along. Additionally the Post detail view has caching.
@@ -68,7 +68,7 @@ the QuerySet by overriding ``ModelAdmin.get_queryset``. The need for
 ``prefetch_related`` is evident from the 100 duplicated queries that are fetching data from the table
 ``newsletter_post_categories``. That table is the intermediate table used with
 a ``models.ManyToManyField``. There is a slight wrinkle in that the categories
-are being rendered in order of the categories' titles. In order to push that
+are being rendered in order of the categories' titles. To push that
 to the database, you must use a [``Prefetch``](https://docs.djangoproject.com/en/stable/ref/models/querysets/#django.db.models.Prefetch)
  object that specifies:
 
@@ -146,7 +146,7 @@ class Post(TimestampedModel):
 
 As a peer, I would probably resort to only using ``recent_first_idx`` and
 waiting until the site slowed down and required a more finely tuned index.
-However, there is the argument to be made that both are necessary.
+However, there is an argument to be made that both are necessary.
 
 #### Post detail
 
@@ -181,7 +181,7 @@ The analytics view specifically is running slow. Can you take a look at it?
 
 To reproduce:
 1. Browse to the [analytics page](http://127.0.0.1:8000/analytics/).
-1. Why has this become slow?
+2. Why has this become slow?
 
 Note, if you're running a nice machine, this slowness may be imaginary. So please
 humor me and pretend it's slow.
@@ -244,13 +244,13 @@ to see, can you look into them?
 
 To reproduce:
 1. Browse to the [analytics page](http://127.0.0.1:8000/analytics/).
-1. It doesn't work.
+2. It doesn't work.
 
 ### Facts
 
 Let's consider what we know:
 
-- The page is rendering correctly but the data may be wrong.
+- The page is rendered correctly, but the data may be wrong.
 - It's unknown if this was ever working correctly, but it certainly is wrong now.
 
 
@@ -306,7 +306,7 @@ Let's consider what we know:
   - What does the Django ORM's ``Count`` expression offer in terms of parameters?
     - You can use the [docs](https://docs.djangoproject.com/en/stable/ref/models/querysets/#id9)
       or inspect [the code](https://github.com/django/django/blob/stable/4.1.x/django/db/models/aggregates.py#L145-L149)
-      (right click on ``Count`` and choose "Go To Definition") in
+      (right-click on ``Count`` and choose "Go To Definition") in
       your IDE if you're using PyCharm or VSCode.
     - We can see that ``Count`` subclasses [``Aggregate`` which has ``distinct`` as
       a param](https://github.com/django/django/blob/e151df24ae2b0a388fc334a6f1dcb31110d5819a/django/db/models/aggregates.py#L25-L35).
@@ -314,7 +314,7 @@ Let's consider what we know:
 ### Conclusion
 
 The solution here is to use ``distinct=True`` in the call to ``Count``. Traversing
-many to many relationships or reverse foreign key relationships can be tricky. You
+many-to-many relationships or reverse foreign key relationships can be tricky. You
 don't want to use ``distinct()`` and ``distinct=True`` everywhere because if it's
 unnecessary, you're needlessly slowing down your application.
 
@@ -347,12 +347,12 @@ A post that shouldn't be public is available to the public now.
 
 To reproduce:
 1. Log into your staff account and browse to the [published posts](http://127.0.0.1:8000/p/).
-1. Use an incognito window to also view the [published posts](http://127.0.0.1:8000/p/).
-1. In the incognito window, click to read a post.
-1. In the staff authenticated window, click "Set to private" for the post opened
+2. Use an incognito window to also view the [published posts](http://127.0.0.1:8000/p/).
+3. In the incognito window, click to read a post.
+4. In the staff authenticated window, click "Set to private" for the post opened
    in the incognito window.
-1. In the incognito window, refresh the page.
-1. This should 404, but it's still available to the public.
+5. In the incognito window, refresh the page.
+6. This should 404, but it's still available to the public.
 
 
 ### Facts
@@ -382,19 +382,19 @@ Let's consider what we know:
   cache being busted?
   1. You can edit a post via the "Edit" link near the top of the detail page.
     Otherwise the URL is ``http://127.0.0.1:8000/post/<post_slug>/update/``
-  1. Save the post.
+  2. Save the post.
      - The response is a redirect to avoid multiple posts.
      - However, this means the toolbar is presenting you the data for the 301
        redirect response, not your POST request.
-  1. Click on the History Panel
-  1. Find the POST request to the ``.../update/`` URL and click "Switch".
-  1. Click on the Cache Panel and view the operations.
+  3. Click on the History Panel
+  4. Find the POST request to the ``.../update/`` URL and click "Switch".
+  5. Click on the Cache Panel and view the operations.
 - Does "Set to private" / "Set to public" delete the cache instance?
   1. Browse to the [post listing page](http://127.0.0.1:8000/p/).
-  1. Click "Set to private" or "Set to public"
-  1. Click the History Panel.
-  1. Find the POST to the ``.../toggle_privacy/`` URL and click "Switch".
-  1. Inspect the Cache Panel for operations.
+  2. Click "Set to private" or "Set to public"
+  3. Click the History Panel.
+  4. Find the POST to the ``.../toggle_privacy/`` URL and click "Switch".
+  5. Inspect the Cache Panel for operations.
 - What is different between how ``toggle_post_privacy`` and ``update_post``
   save the data changes?
 
@@ -420,7 +420,7 @@ a second database query (1 to fetch, 1 to update), but that's pretty minor.
 
 A third option is to stop using on ``post_save`` for cache invalidation
 and to handle all that logic manually within functions in the
-``operations.py`` module. This approach is has more philosophical
+``operations.py`` module. This approach has more philosophical
 implications that you'd need to sort out. Such as, what do you do about
 ``ModelForm`` instances since they mutate the database?
 

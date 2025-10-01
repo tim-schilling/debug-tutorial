@@ -3,7 +3,7 @@
 Welcome to the tutorial! I really appreciate the time you've spent so far
 and the time you spend in the future on this tutorial.
 
-The purpose of this tutorial is to expose you to some of the tools
+The purpose of this tutorial is to expose you to some tools
 available to you as a Djangonaut to aid you in your debugging adventures.
 
 If you didn't attend the talk or would like to view the slides, [you
@@ -20,19 +20,19 @@ I suggest reviewing the [Project Overview page](docs/project_overview.md)
 which has high level information on the models. It should make it easier
 to understand the project.
 
-Regarding debugging methods, a very useful one is to bisect commits or
+Regarding debugging methods, a handy one is to bisect commits or
 find the last known good version, then compare what doesn't work. That
 is very easy to do in this environment, but I strongly suggest that you
 don't do that unless you're stuck.
 
 ## How the Labs will work
 
-There are a total of 7 labs, numbered 1.1-1.3, 2.1-2.4 (it made sense at
+There are a total of seven labs, numbered 1.1-1.3, 2.1-2.4 (it made sense at
 the time). Each is structured with a Report, a set of Facts, an
 Investigation section, a Conclusion and finally Further Consideration.
 
 I suggest using the Investigation section, but if you'd like to avoid any
-hints in your debugging effort then stop reading after the Report and Facts
+hints in your debugging effort, then stop reading after the Report and Facts
 sections.
 
 The Conclusion section will have the solution(s) while Further Consideration
@@ -48,20 +48,20 @@ it works, go for it! Do what you're most comfortable.
 1. Have Python 3.11+ installed. My assumption is that you have your own
    setup decided upon. However, if you're unsure where to go for
    this, I'd recommend using https://www.python.org/downloads/ for today.
-1. From the terminal or command prompt, clone the project.
+2. From the terminal or command prompt, clone the project.
    ```shell
    git clone git@github.com:tim-schilling/debug-tutorial.git
    ```
-   If you don't have a SSH key setup, you can use:
+   If you don't have an SSH key setup, you can use:
    ```shell
    git clone https://github.com/tim-schilling/debug-tutorial.git
    ```
    If you don't have git installed, you can
    [download the zip file](https://github.com/tim-schilling/debug-tutorial/archive/refs/heads/main.zip)
    and unpack it. Be aware, though, that you won't be able to complete some
-   of the instructions in the lab without access to the git history. Cloning
+    instructions in the lab without access to the git history. Cloning
    the repo is recommended.
-1. Change into project directory
+3. Change into project directory
    ```shell
    cd debug-tutorial
    ```
@@ -73,12 +73,12 @@ it works, go for it! Do what you're most comfortable.
 
 ### Windows warning
 
-If you are comfortable on Windows with Python and have setup multiple projects, ignore this
+If you are comfortable on Windows with Python and have set up multiple projects, ignore this
 warning. Do what's comfortable.
 
 If not, I highly recommend using the Windows Subsystem for Linux
 ([docs](https://learn.microsoft.com/en-us/windows/wsl/about)). If you do, the
-rest of the instructions will work for you. If you don't have access to that
+rest of the instructions will work for you. If you don't have access to that, 
 please scroll down to [Windows non-WSL Setup](#windows-non-wsl-setup).
 
 ---
@@ -89,51 +89,51 @@ please scroll down to [Windows non-WSL Setup](#windows-non-wsl-setup).
    ```shell
    python -m venv venv
    ```
-1. Active the virtual environment.
+2. Active the virtual environment.
    ```shell
    source venv/bin/activate
    ```
-1. Install the project dependencies.
+3. Install the project dependencies.
    ```shell
    pip install -r requirements.txt
    ```
-1. Create a new .env file.
+4. Create a new .env file.
    ```shell
    cp .env.dist .env
    ```
    If you use this for literally anything but this tutorial, please
    change the ``SECRET_KEY`` value in your ``.env`` file.
-1. Create the database for the project.
+5. Create the database for the project.
    ```shell
    python manage.py migrate
    ```
-1. Verify the tests currently pass, if they don't and you're not sure why,
+6. Verify the tests currently pass if they don't, and you're not sure why,
    please ask.
    ```shell
    python manage.py test
    ```
-1. Create the fake data. This will take a few minutes.
+7. Create the fake data. This will take a few minutes.
    ```shell
    python manage.py fake_data
    ```
-1. Create your own super user account. Follow the prompts.
+8. Create your own superuser account. Follow the prompts.
    ```shell
    python manage.py createsuperuser
    ```
-1. Run the development web server.
+9. Run the development web server.
    ```shell
    python manage.py runserver
    ```
-1. Verify the following pages load:
-   * http://127.0.0.1:8000/
-   * http://127.0.0.1:8000/p/
-   * http://127.0.0.1:8000/p/term-writer-recognize-race-available-5291/
-1. Log into the admin ([link](http://127.0.0.1:8000/admin/)) with your super user.
-1. Verify the following pages load:
-   * http://127.0.0.1:8000/post/create/
-   * http://127.0.0.1:8000/analytics/
+10. Verify the following pages load:
+    * http://127.0.0.1:8000/
+    * http://127.0.0.1:8000/p/
+    * http://127.0.0.1:8000/p/term-writer-recognize-race-available-5291/
+11. Log into the admin ([link](http://127.0.0.1:8000/admin/)) with your superuser.
+12. Verify the following pages load:
+    * http://127.0.0.1:8000/post/create/
+    * http://127.0.0.1:8000/analytics/
 
-**BOOM!** You're done with the setup. Now that we've accomplished
+**BOOM!** You're done with the setup. Now that we've completed
 the boring stuff, let's get to the dopamine rushes. I mean the bugs.
 
 Proceed to [Lab 1](docs/lab1.md).
@@ -145,48 +145,48 @@ Proceed to [Lab 1](docs/lab1.md).
    ```shell
    python3 -m venv venv
    ```
-1. Activate the project
+2. Activate the project
    ```shell
    .\venv\Scripts\activate
    ```
-1. Install the project dependencies.
+3. Install the project dependencies.
    ```shell
    pip install -r requirements.txt
    ```
-1. Create a new .env file.
+4. Create a new .env file.
    ```shell
    copy .env.dist .env
    ```
    If you use this for literally anything but this tutorial, please
    change the ``SECRET_KEY`` value in your ``.env`` file.
-1. Create the database for the project.
+5. Create the database for the project.
    ```shell
    python -m manage migrate
    ```
-1. Verify the tests currently pass, if they don't and you're not sure why,
+6. Verify the tests currently pass if they don't, and you're not sure why,
    please ask.
    ```shell
    python -m manage test
    ```
-1. Create the fake data. This will take a few minutes.
+7. Create the fake data. This will take a few minutes.
    ```shell
    python -m manage fake_data
    ```
-1. Create your own super user account. Follow the prompts.
+8. Create your own superuser account. Follow the prompts.
    ```shell
    python -m manage createsuperuser
    ```
-1. Run the development web server.
+9. Run the development web server.
    ```shell
    python -m manage runserver
    ```
-1. Verify the following pages load:
-   * http://127.0.0.1:8000/
-   * http://127.0.0.1:8000/p/
-   * http://127.0.0.1:8000/p/term-writer-recognize-race-available-5291/
-1. Log into the admin ([link](http://127.0.0.1:8000/admin/)) with your super user.
-1. Verify the following pages load:
-   * http://127.0.0.1:8000/post/create/
-   * http://127.0.0.1:8000/analytics/
+10. Verify the following pages load:
+    * http://127.0.0.1:8000/
+    * http://127.0.0.1:8000/p/
+    * http://127.0.0.1:8000/p/term-writer-recognize-race-available-5291/
+11. Log into the admin ([link](http://127.0.0.1:8000/admin/)) with your superuser.
+12. Verify the following pages load:
+    * http://127.0.0.1:8000/post/create/
+    * http://127.0.0.1:8000/analytics/
 
 Proceed to [Lab 1](docs/lab1.md).

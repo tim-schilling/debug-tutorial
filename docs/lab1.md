@@ -42,7 +42,7 @@ Let's consider what we know:
 
 ### Conclusion
 
-In this scenario the Post's slug field is being used to generate the
+In this scenario, the Post's slug field is being used to generate the
 URL, while the view expects the title to be passed in.
 
 This is an example of a bug in which the error report provides the majority
@@ -50,7 +50,7 @@ of the information we need, but we have to read closely and correctly
 interpret the information. Try to avoid making assumptions about what you
 expect the error to be. Sometimes we'll see an exception type and think,
 "Oh, that obviously has to be in XYZ." But upon reading the actual error
-message and looking at the stacktrace we discover it's from ABC.
+message and looking at the stacktrace, we discover it's from ABC.
 
 To solve this, we should pass ``post.slug`` into the calls for generating
 ``newsletter:view_post``. I'd also argue that the URL parameter should be
@@ -78,7 +78,7 @@ would look like if that's how the code worked; we wouldn't have an error message
 or a stacktrace. We simply would see that the view is returning our HTTP 404 template
 implying the Post doesn't exist when we know it does.
 
-What I'd like you to think about for a minute is how would you approach this problem
+What I'd like you to think about for a minute is how you would approach this problem
 in that scenario (the view is returning a 404 response when it shouldn't)?
 
 
@@ -100,11 +100,11 @@ Creating posts is broken. The open graph image doesn't get uploaded!
 
 To reproduce:
 1. Browse to the [create post page](http://127.0.0.1:8000/post/create/).
-1. Fill out the form fields with some filler information.
-1. Select an image for "Open graph image"
-1. Click save.
-1. The update form does not contain the file for the Open graph image field.
-1. "It doesn't work!"
+2. Fill out the form fields with some filler information.
+3. Select an image for "Open graph image"
+4. Click save.
+5. The update form does not contain the file for the Open graph image field.
+6. "It doesn't work!"
 
 ### Facts
 
@@ -184,12 +184,12 @@ order of most recent to oldest, but they appear jumbled.
 
 To reproduce:
 1. Browse to the [list posts](http://127.0.0.1:8000/p/) view.
-1. The dates are ordered from most recent to oldest, but posts such as
+2. The dates are ordered from most recent to oldest, but posts such as
    "Campaign expect page information wrong more." and "Example
    become begin wish painting economic."
    appear out of order in comparison to "Skill fight girl north
    production thus a." and "New star by chair environmental family Congress degree."
-1. "It doesn't work!"
+3. "It doesn't work!"
 
 ### Facts
 
