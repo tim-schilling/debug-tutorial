@@ -112,7 +112,8 @@ in that scenario (the view is returning a 404 response when it shouldn't)?
 ## Lab 1.2
 
 This lab covers a very common error, but hard to diagnosis when it's an
-[unknown unknown](https://www.techtarget.com/whatis/definition/unknown-unknown).
+[unknown unknown](https://en.wikipedia.org/wiki/There_are_unknown_unknowns).
+An unknown unknown is something that you don't know, that you don't know.
 
 Change to the correct branch:
 
@@ -158,17 +159,35 @@ Let's consider what we know:
 - What is different between creating a Post in the admin versus
   creating a Post in our own application?
   - Compare the rendered ``<input>`` elements for ``open_graph_image``.
-  - Compare the containing ``form`` element on the for those inputs.
+  - Compare the containing ``form`` elements for those inputs.
+
+<details>
+<summary>Hints</summary>
+
+If you've gone through all the steps of the investigation, and you're still unsure of why the
+file isn't being shared, you should read about the
+[``enctype`` attribute of forms](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/form#enctype).
+
+You'll see that the 
+
+By default, a ``<form>`` element will use ``enctype="application/x-www-form-urlencoded"``.
+However, as we found, that will not submit any ``<input type="file" />`` (or other file-based
+types) in the request. In order to include a file in the body of the request, the form must be
+encoded with ``multipart/form-data``. This
+[Stack Overflow answer](https://stackoverflow.com/a/4526286/1637351) has a bunch of good
+information.
+
+</details>
 
 ### Conclusion
 
 In this scenario the ``<form>`` element on that's used for creating/updating
-a Post is missing the [proper ``enctype="multipart/form-data""`` attribute](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/enctype).
-This is 100% one of those, need to remember parts for web development.
+a Post is missing the [proper ``enctype="multipart/form-data"`` attribute](https://developer.mozilla.org/en-US/docs/Web/API/HTMLFormElement/enctype).
+This is 100% one of those, need to remember parts of web development.
 
 However, by asking the above questions, we can determine that this attribute is what's
 needed without knowing about it in the first place. You're never going to know
-everything about everything so you will benefit from developing skills that
+everything about everything, so you will benefit from developing skills that
 help you reveal those unknown unknowns.
 
 By starting with the fact that the server is not getting a file, we know the
