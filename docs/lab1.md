@@ -249,6 +249,42 @@ Let's consider what we know:
 - How are the posts being ordered for ``newsletter.views.list_posts``?
 - What is rendering the datetime string on the page?
 
+
+<details>
+<summary>Hints</summary>
+
+Reviewing ``newsletter.views.list_posts``, we see that the QuerySet is being
+ordered by ``recent_first()`` which orders the QuerySet with ``Coalesce("publish_at", "created").desc()``. This means that the posts will show up
+in descending order based on their ``publish_at`` value or ``created`` value if
+``publish_at`` is set to ``None``. If we needed to, we could check the query
+that is run to confirm this ordering is used, but it's a fair assumption
+considering the size of the view and template.
+
+The next piece of the puzzle is determining how the timestamp for the post is
+rendered. There are two general ways to approach this. One is to look at the rendered HTML for something to search our templates for. The other is to review the templates top down, starting with the template that's used to render the view and look through them until we find the relevant part.
+
+Let's start with searching the code base for existing piece of HTML. Using the Browser Developer tools and the Inspector (these names may be different with your browser), select the timestamp for one of the posts on the list view. Clicking that should then highlight some HTML that looks similar to:
+
+```html
+<div class="left floated six wide column">
+  <span class="" title="April 21, 2021, 5:51 a.m.">
+    4&nbsp;years, 5&nbsp;months ago
+  </span>
+</div>
+```
+
+We can assume that the date specific information is going to be in some type of template filter or template tag. So let's try searching our codebase for ``left floated six wide column``. This should have two code matches. One of which will have a child element with the text "Read More", and since that doesn't appear in our HTML, we can exclude it. This leaves us with the template ``projects/templates/posts/includes/list_item.html``. From our search result, we can see that the template tag ``{% nice_datetime ... %}`` is rendering the timestamp.
+
+If we wanted to try from the other approach, we'd start by looking at ``project/templates/posts/list.html``. We can see a loop over
+to render individual elements for posts on the page, ``{% for post in page %}``.
+This brings us to the template ``projects/templates/posts/includes/list_item.html``. From there, we'd need to compare the rendered HTML to the template to narrow it down to the template tag ``{% nice_datetime ... %}``.
+
+Inspecting the function ``nice_datetime``, we see that it's template tag makes use of an ``inclusion_tag`` decorator (read more about it [here in the docs](https://docs.djangoproject.com/en/stable/howto/custom-template-tags/#inclusion-tags)). When we review the template ``projects/templates/inclusion_tags/nice_datetime.html``, we see that the timestamp is rendered via the ``timestamp`` context variable. Backtracking to ``nice_datetime``, ``timestamp`` is declared by ``timestamp = post.created``.
+
+This is root problem since the collection of posts are actually ordered based on ``published_at`` and then ``created`` if ``published_at`` wasn't set.
+
+</details>
+
 ### Conclusion
 
 The posts are being ordered correctly, ``publish_at`` first, falling back to
