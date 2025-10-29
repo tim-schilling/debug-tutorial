@@ -425,6 +425,10 @@ Let's consider what we know:
   - Refresh the page to see if it 404's.
 - Does updating a post to be private via the update view result in the
   cache being busted?
+
+<details>
+<summary>Hints</summary>
+
   1. You can edit a post via the "Edit" link near the top of the detail page.
     Otherwise the URL is ``http://127.0.0.1:8000/post/<post_slug>/update/``
   2. Save the post.
@@ -440,8 +444,20 @@ Let's consider what we know:
   3. Click the History Panel.
   4. Find the POST to the ``.../toggle_privacy/`` URL and click "Switch".
   5. Inspect the Cache Panel for operations.
-- What is different between how ``toggle_post_privacy`` and ``update_post``
-  save the data changes?
+
+At this point it's clear there's a difference in functionality between how
+``toggle_post_privacy`` and ``update_post`` save the data changes.
+``toggle_post_privacy`` updates the instance using a ``QuerySet.update()``
+call while ``update_post`` uses ``PostForm.save()`` which under the hood is
+doing something like ``Model.save()``. If we read 
+[the documentation for ``update``](https://docs.djangoproject.com/en/stable/ref/models/querysets/#update)
+we'll see that there's a note that the ``post_save`` signal isn't emitted.
+This explains why ``toggle_post_privacy`` doesn't delete the cached value
+because the ``on_post_save`` signal receiver in ``receivers.py`` is only
+listening on ``post_save``.
+
+</details>
+
 
 ### Conclusion
 
