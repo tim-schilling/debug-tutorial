@@ -22,7 +22,7 @@ To reproduce:
 4. Why are these slow?
 
 Note, given that we're dealing with SQLite locally, the "slowness" is largely
-imaginary so please play along. Additionally the Post detail view has caching.
+ imaginary, so please play along. Additionally, the Post detail view has caching.
 The cache can be cleared by opening a Django shell (``python -m manage shell``)
 and running:
 
@@ -35,8 +35,8 @@ cache.clear()
 
 Let's consider what we know:
 
-- The pages are rendering correctly and there are no errors.
-- The pages were rendering "fast" earlier, but over time as the data set has grown
+- The pages render correctly and there are no errors.
+- The pages rendered "fast" earlier, but over time as the data set has grown, 
   they have slowed down.
 
 
@@ -54,6 +54,39 @@ Let's consider what we know:
     index. This means they are iterating over the entire table comparing all
     the values.
 
+<details>
+<summary>Hints</summary>
+
+Review each of the pages individually. Starting with the [posts page](http://127.0.0.1:8000/p/),
+we'll see that the SQL panel of the toolbar indicates there are over 100 queries
+being run on this page. Clicking on the SQL panel shows a duplicated SQL query such as:
+
+> SELECT ••• FROM "newsletter_category" INNER JOIN "newsletter_post_categories" ON ("newsletter_category"."id" = "newsletter_post_categories"."category_id") WHERE "newsletter_post_categories"."post_id" = 2654 ORDER BY "newsletter_category"."title" ASC
+> 100 similar queries.
+
+This suggests we would need to use ``.select_related()`` or ``.prefetch_related()``. Which
+depends on the data model. Since these queries are fetching the category, and we know
+that ``Post.categories`` is a ``ManyToManyField``, we'll need to use ``.prefetch_related()``.
+Since the categories need to be specifically ordered, you'll need to use a
+[``Prefetch``](https://docs.djangoproject.com/en/stable/ref/models/querysets/#django.db.models.Prefetch) instance rather than just a string.
+
+Moving onto an individual [post page](http://127.0.0.1:8000/p/term-writer-recognize-race-available-5291/),
+the SQL panel only shows 1 query. Clicking into that panel, we'll see some really low value,
+like 5ms. This in pretty much every definition is fast. However, let's trust the reporter
+that this is actually slow. The next step is to understand what about this query is
+taking so much time. Clicking the Explain button at the end of the row for the query
+will show the SQL query that was executed as well as the result of the Explain statement.
+The Detail column shows ``SCAN newsletter_post`` which means SQLite is looking at every row
+individual of the table to find the post with the given ``slug``. This is very
+inefficient. Adding an index will solve this. This can either be done with [``db_index``](https://docs.djangoproject.com/en/stable/ref/models/fields/#django.db.models.Field.db_index)
+on the model field or setting the [``Meta.indexes`` on the model](https://docs.djangoproject.com/en/stable/ref/models/options/#django.db.models.Options.indexes).
+
+Checking the [posts admin page](http://127.0.0.1:8000/admin/newsletter/post/), we can see
+the SQL panel is showing over 100 queries again. This means we need to use
+``.prefetch_related()`` again. A likely spot to use it would be in
+the [``def get_queryset(self, request, *args, **kwargs)`` method](https://docs.djangoproject.com/en/stable/ref/contrib/admin/#django.contrib.admin.ModelAdmin.get_queryset).
+
+</details>
 
 ### Conclusion
 
@@ -73,8 +106,8 @@ to the database, you must use a [``Prefetch``](https://docs.djangoproject.com/en
  object that specifies:
 
 ```python
-def get_queryset(self, request):
-    return super().get_queryset(request).prefetch_related(
+def get_queryset(self, request, *args, **kwargs):
+    return super().get_queryset(request, *args, **kwargs).prefetch_related(
         Prefetch(
             'categories',
             queryset=Category.objects.all().order_by('title')
