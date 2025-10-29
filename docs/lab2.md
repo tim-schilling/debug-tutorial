@@ -332,19 +332,29 @@ Let's consider what we know:
   resolve the issue?
 - Does adding ``categories__isnull=False`` to the ``Post`` QuerySet cause
   an unexpected result?
-- Why does the inclusion of the join, ``LEFT OUTER JOIN "newsletter_subscription_categories"``
-  cause duplicates?
-  - This is because the joined table may have multiple matches for any Subscription
-    row causing the ``Count`` function to find more than one, leading to an inflated
-    count.
-  - This can be fixed by using an appropriate ``GROUP BY`` clause in the SQL.
-  - What does the Django ORM's ``Count`` expression offer in terms of parameters?
-    - You can use the [docs](https://docs.djangoproject.com/en/stable/ref/models/querysets/#id9)
-      or inspect [the code](https://github.com/django/django/blob/stable/4.1.x/django/db/models/aggregates.py#L145-L149)
-      (right-click on ``Count`` and choose "Go To Definition") in
-      your IDE if you're using PyCharm or VSCode.
-    - We can see that ``Count`` subclasses [``Aggregate`` which has ``distinct`` as
-      a param](https://github.com/django/django/blob/e151df24ae2b0a388fc334a6f1dcb31110d5819a/django/db/models/aggregates.py#L25-L35).
+
+
+<details>
+<summary>Hints</summary>
+
+If you've gone through all the steps of the investigation, you should have determined
+that the inclusion of the join, ``LEFT OUTER JOIN "newsletter_subscription_categories"``
+causes duplicates. This is because the joined table may have multiple matches for any
+subscription row causing the ``COUNT`` function to find more than one, leading to an
+inflated count.
+
+This can be fixed by using an appropriate ``GROUP BY`` clause in the SQL. To use this
+in the ORM, we can either inspect the code or use the docs to see what options Django
+ORM's``Count`` provides us. You can use the [docs](https://docs.djangoproject.com/en/stable/ref/models/querysets/#id9)
+or inspect [the code](https://github.com/django/django/blob/stable/5.2.x/django/db/models/aggregates.py#L168-L173)
+(right-click on ``Count`` and choose "Go To Definition") in your IDE if you're using
+PyCharm or VSCode.
+
+We can see that ``Count`` subclasses
+[``Aggregate`` which has ``distinct`` as a param](https://github.com/django/django/blob/stable/5.2.x/django/db/models/aggregates.py#L26-L37).
+This matches [the documentation](https://docs.djangoproject.com/en/5.2/ref/models/querysets/#django.db.models.Count.distinct) as well.
+
+</details>
 
 ### Conclusion
 
