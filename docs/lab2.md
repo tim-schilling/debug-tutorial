@@ -202,6 +202,8 @@ Could you benefit from using [``assertNumQueries(...)``](https://docs.djangoproj
 
 ## Lab 2.2
 
+**Please skip this lab. The Django Debug Toolbar's Profile panel isn't compatible at this time**
+
 Change to the correct branch:
 
 ```shell
@@ -223,8 +225,8 @@ humor me and pretend it's slow.
 
 Let's consider what we know:
 
-- The page was rendering correctly and there are no errors.
-- The page was rendering "fast" when it was first introduced, but has since slowed
+- The page renders correctly and there are no errors.
+- The page rendered "fast" when it was first introduced, but has since slowed
   down.
 
 
