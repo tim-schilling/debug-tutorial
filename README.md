@@ -1,12 +1,11 @@
-# "It doesn't work" - A Djangonaut's Debugging Toolkit
+# A Djangonaut's Debugging Toolkit
 
-Welcome to the tutorial! I really appreciate the time you've spent so far
-and the time you spend in the future on this tutorial.
-
-The purpose of this tutorial is to expose you to some tools
+Welcome! The purpose of this tutorial is to expose you to some tools
 available to you as a Djangonaut to aid you in your debugging adventures.
 
-If you didn't attend the talk or would like to view the slides, [you
+This tutorial was originally created for my DjangoCon 2022 tutorial,
+["'It doesn't work' - A Djangonaut's Debugging Toolkit"](https://2022.djangocon.us/tutorials/it-doesnt-work-a-djangonauts-debugging/).
+If you would like to view the slides, [you
 can find them here](https://docs.google.com/presentation/d/1dmeFD5kGsukQaMinU0BJQyyCeu5ZGR4drc0pJilT10Y/edit?usp=share_link).
 
 ## Preamble to the setup
@@ -23,7 +22,8 @@ to understand the project.
 Regarding debugging methods, a handy one is to bisect commits or
 find the last known good version, then compare what doesn't work. That
 is very easy to do in this environment, but I strongly suggest that you
-don't do that unless you're stuck.
+don't do that unless you're stuck. This is because the solutions are in
+the Git history.
 
 ## How the Labs will work
 
