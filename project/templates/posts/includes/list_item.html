@@ -22,4 +22,9 @@
   <div class="left floated six wide column">
     <a href="{{ post.get_absolute_url }}" class="ui large button">Read More</a>
   </div>
+  {% if request.user.is_staff %}
+    <div class="right floated six wide column">
+      <a href="{% url "newsletter:update_post" slug=post.slug %}" class="ui basic compact button">Edit</a>
+    </div>
+  {% endif %}
 </div>

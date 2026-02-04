@@ -28,6 +28,10 @@
         {{ post.title }}
       {% endif %}
     </div>
+    {% if request.user.is_staff %}
+      <div class="divider"> / </div>
+      <a href="{% url "newsletter:update_post" slug=post.slug %}" class="section">Edit</a>
+    {% endif %}
   </div>
   <p>
     Posted {{ post.publish_date|naturaltime }}

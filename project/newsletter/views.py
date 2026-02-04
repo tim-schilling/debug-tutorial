@@ -19,7 +19,7 @@ from django.views.decorators.http import require_http_methods
 from martor.utils import LazyEncoder
 
 from project.newsletter import operations
-from project.newsletter.forms import SubscriptionForm
+from project.newsletter.forms import PostForm, SubscriptionForm
 from project.newsletter.models import Category, Post, Subscription
 
 LIST_POSTS_PAGE_SIZE = 100
@@ -130,6 +130,24 @@ def unpublished_posts(request):
 
 
 @staff_member_required(login_url=settings.LOGIN_URL)
+@require_http_methods(["GET", "POST"])
+def update_post(request, slug):
+    """
+    Staff update post view
+    """
+    post = get_object_or_404(Post, slug=slug)
+    form = PostForm(instance=post)
+    if request.method == "POST":
+        form = PostForm(request.POST, instance=post)
+        if form.is_valid():
+            form.instance.author = request.user
+            post = form.save()
+            messages.success(request, f"Post '{post.title}' was updated successfully.")
+            return redirect("newsletter:update_post", slug=post.slug)
+    return render(request, "staff/post_form.html", {"form": form, "post": post})
+
+
+@staff_member_required(login_url=settings.LOGIN_URL)
 @require_http_methods(["POST"])
 def toggle_post_privacy(request, slug):
     """
@@ -150,6 +168,23 @@ def toggle_post_privacy(request, slug):
     if url := request.GET.get("next"):
         return redirect(url)
     return redirect("newsletter:list_posts")
+
+
+@staff_member_required(login_url=settings.LOGIN_URL)
+@require_http_methods(["GET", "POST"])
+def create_post(request):
+    """
+    Staff create post view
+    """
+    form = PostForm()
+    if request.method == "POST":
+        form = PostForm(request.POST)
+        if form.is_valid():
+            form.instance.author = request.user
+            post = form.save()
+            messages.success(request, f"Post '{post.title}' was created successfully.")
+            return redirect("newsletter:update_post", slug=post.slug)
+    return render(request, "staff/post_form.html", {"form": form, "post": None})
 
 
 @staff_member_required(login_url=settings.LOGIN_URL)
