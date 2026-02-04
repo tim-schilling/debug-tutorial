@@ -21,7 +21,6 @@ urlpatterns = [
         include(
             [
                 path("", views.list_posts, name="list_posts"),
-                path("<slug>/", views.view_post, name="view_post"),
             ]
         ),
     ),

@@ -6,7 +6,6 @@ from django.conf import settings
 from django.contrib import messages
 from django.contrib.admin.views.decorators import staff_member_required
 from django.contrib.auth.decorators import login_required
-from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.paginator import Paginator
@@ -18,7 +17,6 @@ from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
 from martor.utils import LazyEncoder
 
-from project.newsletter import operations
 from project.newsletter.forms import PostForm, SubscriptionForm
 from project.newsletter.models import Category, Post, Subscription
 
@@ -67,33 +65,6 @@ def list_posts(request):
     page_range = paginator.get_elided_page_range(page_obj.number)
     return render(
         request, "posts/list.html", {"page": page_obj, "page_range": page_range}
-    )
-
-
-@require_http_methods(["GET"])
-def view_post(request, slug):
-    """
-    The post detail view.
-    """
-    post = cache.get(f"post.detail.{slug}", None)
-    if request.user.is_authenticated or not post:
-        posts = Post.objects.published().annotate_is_unread(request.user)
-        if not request.user.is_authenticated:
-            posts = posts.public()
-        post = get_object_or_404(posts, slug=slug)
-        if post.is_unread:
-            operations.mark_as_read(post, request.user)
-        if post.is_public:
-            cache.set(f"post.detail.{slug}", post, timeout=600)
-    is_trending = operations.check_is_trending(post)
-    return render(
-        request,
-        "posts/detail.html",
-        {
-            "post": post,
-            "is_trending": is_trending,
-            "open_graph_url": request.build_absolute_uri(post.get_absolute_url()),
-        },
     )
 
 
