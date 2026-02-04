@@ -1,9 +1,11 @@
 {% load martortags %}
+{% load newsletter_utils %}
 
 <h3 class="ui header">{{ post.title }}</h3>
 
 <div class="ui grid middle aligned">
   <div class="left floated six wide column">
+    {% nice_datetime post=post is_unread=post.is_unread %}
   </div>
   <div class="right floated six wide column">
     <span class="ui small text">
