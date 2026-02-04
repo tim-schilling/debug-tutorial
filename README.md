@@ -78,7 +78,7 @@ warning. Do what's comfortable.
 
 If not, I highly recommend using the Windows Subsystem for Linux
 ([docs](https://learn.microsoft.com/en-us/windows/wsl/about)). If you do, the
-rest of the instructions will work for you. If you don't have access to that, 
+rest of the instructions will work for you. If you don't have access to that,
 please scroll down to [Windows non-WSL Setup](#windows-non-wsl-setup).
 
 ---
@@ -95,7 +95,7 @@ please scroll down to [Windows non-WSL Setup](#windows-non-wsl-setup).
    ```
 3. Install the project dependencies.
    ```shell
-   pip install -r requirements.txt
+   pip install -e .
    ```
 4. Create a new .env file.
    ```shell
@@ -151,7 +151,7 @@ Proceed to [Lab 1](docs/lab1.md).
    ```
 3. Install the project dependencies.
    ```shell
-   pip install -r requirements.txt
+   pip install -e .
    ```
 4. Create a new .env file.
    ```shell

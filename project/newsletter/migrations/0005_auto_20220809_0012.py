@@ -13,7 +13,6 @@ def create_site(apps, schema_editor):  # pragma: nocover
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("newsletter", "0004_alter_subscription_options_and_more"),
         ("sites", "0002_alter_domain_unique"),

@@ -155,12 +155,12 @@ class Post(TimestampedModel):
     def __repr__(self):
         return f"<Post title={self.title} slug={self.slug} is_published={self.is_published} created={self.created} updated={self.updated}>"
 
+    def get_absolute_url(self):
+        return reverse("newsletter:view_post", kwargs={"slug": self.slug})
+
     @property
     def publish_date(self):
         return self.publish_at or self.created
-
-    def get_absolute_url(self):
-        return reverse("newsletter:view_post", kwargs={"slug": self.slug})
 
 
 class SubscriptionQuerySet(models.QuerySet):
@@ -206,6 +206,9 @@ class Subscription(TimestampedModel):
     def __repr__(self):
         return f"<Subscription id={self.id} user={self.user_id} created={self.created} updated={self.updated}>"
 
+    def __str__(self):
+        return f"Subscription id={self.id}"
+
 
 class SubscriptionNotificationQuerySet(models.QuerySet):
     def needs_notifications_sent_for_post(self, post: Post):
@@ -234,13 +237,6 @@ class SubscriptionNotification(TimestampedModel):
     should be notified of the post.
     """
 
-    class Meta:
-        constraints = [
-            models.UniqueConstraint(
-                fields=["post", "subscription"], name="subscript_notif_uniq"
-            )
-        ]
-
     subscription = models.ForeignKey(
         Subscription, related_name="notifications", on_delete=models.CASCADE
     )
@@ -251,5 +247,15 @@ class SubscriptionNotification(TimestampedModel):
     read = models.DateTimeField(null=True, blank=True)
     objects = models.Manager.from_queryset(SubscriptionNotificationQuerySet)()
 
+    class Meta:
+        constraints = [
+            models.UniqueConstraint(
+                fields=["post", "subscription"], name="subscript_notif_uniq"
+            )
+        ]
+
     def __repr__(self):
         return f"<SubscriptionNotification id={self.id} subscription={self.subscription_id} post={self.post_id} sent={self.sent} created={self.created} updated={self.updated}>"
+
+    def __str__(self):
+        return f"SubscriptionNotification id={self.id}"

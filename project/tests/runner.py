@@ -21,7 +21,6 @@ class ProjectTestRunner(DiscoverRunner):
             self.interactive = interactive
 
     def run_tests(self, *args, **kwargs):
-
         with override_settings(**TEST_SETTINGS):
             return super().run_tests(*args, **kwargs)
 

@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("newsletter", "0007_alter_subscriptionnotification_options_and_more"),
     ]

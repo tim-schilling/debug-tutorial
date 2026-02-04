@@ -8,7 +8,6 @@ from project.newsletter.test import DataTestCase
 
 class TestPostOnSave(DataTestCase):
     def test_clears_cache_on_save(self):
-
         post = Post.objects.create(
             slug="receiver",
             title="receiver",

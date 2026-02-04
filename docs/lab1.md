@@ -168,7 +168,7 @@ If you've gone through all the steps of the investigation, and you're still unsu
 file isn't being shared, you should read about the
 [``enctype`` attribute of forms](https://developer.mozilla.org/en-US/docs/Web/HTML/Reference/Elements/form#enctype).
 
-You'll see that the 
+You'll see that the
 
 By default, a ``<form>`` element will use ``enctype="application/x-www-form-urlencoded"``.
 However, as we found, that will not submit any ``<input type="file" />`` (or other file-based

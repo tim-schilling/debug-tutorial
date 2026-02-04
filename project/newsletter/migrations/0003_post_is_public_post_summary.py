@@ -5,7 +5,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("newsletter", "0002_remove_post_is_draft_post_is_published_and_more"),
     ]

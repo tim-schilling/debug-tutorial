@@ -316,7 +316,7 @@ class TestTogglePostPrivacy(DataTestCase):
         # Toggle the property back and verify the redirect to next.
         response = self.client.post(
             url
-            + f'?next={reverse("newsletter:update_post", kwargs={"slug": post.slug})}'
+            + f"?next={reverse('newsletter:update_post', kwargs={'slug': post.slug})}"
         )
         self.assertRedirects(
             response, reverse("newsletter:update_post", kwargs={"slug": post.slug})

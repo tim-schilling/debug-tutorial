@@ -1,0 +1,66 @@
+[project]
+name = "debug-tutorial"
+version = "1.0.0"
+description = "An example Newsletter application used for a debugging tutorial."
+authors = [
+    {name = "Tim Schilling", email = "schillingt@better-simple.com"}
+]
+readme = "README.md"
+license = "AGPL-3.0-or-later"
+requires-python = ">=3.11"
+dependencies = [
+    "coverage",
+    "django-anymail",
+    "django-coverage-plugin",
+    "django-debug-toolbar",
+    "django-environ",
+    "django-registration-redux",
+    "faker",
+    "martor",
+    "mdgen",
+    "Pillow",
+    "pre-commit",
+    "ruff",
+]
+
+[project.urls]
+Homepage = "https://github.com/tim-schilling/debug-tutorial"
+Repository = "https://github.com/tim-schilling/debug-tutorial"
+
+[tool.setuptools]
+packages = ["project"]
+
+[tool.coverage.html]
+skip_covered = true
+skip_empty = true
+
+[tool.coverage.run]
+branch = true
+parallel = true
+source = ["project"]
+omit = [
+    "manage.py",
+    "project/config/asgi.py",
+    "project/config/wsgi.py",
+    "project/data/*",
+]
+plugins = ["django_coverage_plugin"]
+
+[tool.coverage.django_coverage_plugin]
+template_extensions = "html, txt"
+
+[tool.coverage.paths]
+source = ["project"]
+
+[tool.coverage.report]
+show_missing = true
+
+[tool.ruff]
+line-length = 88
+
+[tool.ruff.lint]
+extend-ignore = ["E501"]
+select = ["E", "F", "I", "UP", "DJ"]
+
+[tool.ruff.lint.isort]
+combine-as-imports = true

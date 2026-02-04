@@ -1,4 +1,4 @@
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from itertools import cycle
 
 from faker import Faker
@@ -42,17 +42,17 @@ def generate_data(user, image_category, post_categories):
         slug = slugify(title) + f"-{fake.pyint(10, 99999)}"
         publish_at = (
             fake.date_time_between_dates(
-                datetime_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
-                datetime_end=datetime(2022, 10, 12, tzinfo=timezone.utc),
-                tzinfo=timezone.utc,
+                datetime_start=datetime(2020, 1, 1, tzinfo=UTC),
+                datetime_end=datetime(2022, 10, 12, tzinfo=UTC),
+                tzinfo=UTC,
             )
             if fake.pybool()
             else None
         )
         created = fake.date_time_between_dates(
-            datetime_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
-            datetime_end=datetime(2022, 10, 12, tzinfo=timezone.utc),
-            tzinfo=timezone.utc,
+            datetime_start=datetime(2020, 1, 1, tzinfo=UTC),
+            datetime_end=datetime(2022, 10, 12, tzinfo=UTC),
+            tzinfo=UTC,
         )
         if publish_at and publish_at < created:
             created = publish_at
@@ -89,17 +89,17 @@ def generate_data(user, image_category, post_categories):
         slug = slugify(title) + f"-{fake.pyint(10, 9999)}"
         publish_at = (
             fake.date_time_between_dates(
-                datetime_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
-                datetime_end=datetime(2022, 10, 12, tzinfo=timezone.utc),
-                tzinfo=timezone.utc,
+                datetime_start=datetime(2020, 1, 1, tzinfo=UTC),
+                datetime_end=datetime(2022, 10, 12, tzinfo=UTC),
+                tzinfo=UTC,
             )
             if fake.pybool()
             else None
         )
         created = fake.date_time_between_dates(
-            datetime_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
-            datetime_end=datetime(2022, 10, 12, tzinfo=timezone.utc),
-            tzinfo=timezone.utc,
+            datetime_start=datetime(2020, 1, 1, tzinfo=UTC),
+            datetime_end=datetime(2022, 10, 12, tzinfo=UTC),
+            tzinfo=UTC,
         )
         if publish_at and publish_at < created:
             created = publish_at

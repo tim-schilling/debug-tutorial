@@ -21,7 +21,7 @@ def log(event):
     logger.info(f"{event} - start")
     yield
     end = timezone.now()
-    logger.info(f"{event} - end, {(end-start).total_seconds()}s")
+    logger.info(f"{event} - end, {(end - start).total_seconds()}s")
 
 
 class Command(BaseCommand):

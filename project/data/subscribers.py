@@ -1,5 +1,5 @@
 from collections import OrderedDict
-from datetime import datetime, timezone
+from datetime import UTC, datetime
 from functools import partial
 
 from django.contrib.auth.models import User
@@ -25,9 +25,9 @@ def generate_data(categories: CategoryData):
             )
             user.email = f"{user.username}@example.com"
             user.date_joined = fake.date_time_between_dates(
-                datetime_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
-                datetime_end=datetime(2022, 10, 12, tzinfo=timezone.utc),
-                tzinfo=timezone.utc,
+                datetime_start=datetime(2020, 1, 1, tzinfo=UTC),
+                datetime_end=datetime(2022, 10, 12, tzinfo=UTC),
+                tzinfo=UTC,
             )
             users.append(user)
         User.objects.bulk_create(users, ignore_conflicts=True)
@@ -50,9 +50,9 @@ def generate_data(categories: CategoryData):
     for i in range(0, USER_COUNT, 50):
         created_map = {
             user_id: fake.date_time_between_dates(
-                datetime_start=datetime(2020, 1, 1, tzinfo=timezone.utc),
-                datetime_end=datetime(2022, 10, 12, tzinfo=timezone.utc),
-                tzinfo=timezone.utc,
+                datetime_start=datetime(2020, 1, 1, tzinfo=UTC),
+                datetime_end=datetime(2022, 10, 12, tzinfo=UTC),
+                tzinfo=UTC,
             )
             for user_id in user_ids[i : i + 50]
         }

@@ -36,7 +36,7 @@ cache.clear()
 Let's consider what we know:
 
 - The pages render correctly and there are no errors.
-- The pages rendered "fast" earlier, but over time as the data set has grown, 
+- The pages rendered "fast" earlier, but over time as the data set has grown,
   they have slowed down.
 
 
@@ -449,7 +449,7 @@ At this point it's clear there's a difference in functionality between how
 ``toggle_post_privacy`` and ``update_post`` save the data changes.
 ``toggle_post_privacy`` updates the instance using a ``QuerySet.update()``
 call while ``update_post`` uses ``PostForm.save()`` which under the hood is
-doing something like ``Model.save()``. If we read 
+doing something like ``Model.save()``. If we read
 [the documentation for ``update``](https://docs.djangoproject.com/en/stable/ref/models/querysets/#update)
 we'll see that there's a note that the ``post_save`` signal isn't emitted.
 This explains why ``toggle_post_privacy`` doesn't delete the cached value

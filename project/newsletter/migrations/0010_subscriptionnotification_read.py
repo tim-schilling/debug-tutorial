@@ -4,7 +4,6 @@ from django.db import migrations, models
 
 
 class Migration(migrations.Migration):
-
     dependencies = [
         ("newsletter", "0009_post_open_graph_description_post_open_graph_image"),
     ]
