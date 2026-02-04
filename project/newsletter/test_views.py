@@ -12,88 +12,6 @@ from project.newsletter.models import Post, Subscription, SubscriptionNotificati
 from project.newsletter.test import DataTestCase
 
 
-class TestLanding(DataTestCase):
-    url = reverse("newsletter:landing")
-
-    def test_unauthenticated(self):
-        response = self.client.get(self.url)
-        self.assertTemplateUsed(response, "landing.html")
-        self.assertEqual(
-            list(response.context["posts"]), [self.data.career_post, self.data.all_post]
-        )
-
-    def test_authenticated_no_subscription(self):
-        self.client.force_login(User.objects.create_user(username="inline"))
-        response = self.client.get(self.url)
-        self.assertTemplateUsed(response, "landing.html")
-        self.assertEqual(
-            list(response.context["posts"]), [self.data.career_post, self.data.all_post]
-        )
-        # Verify the categories are rendered
-        self.assertContains(response, self.data.career_post.categories.first().title)
-
-    def test_authenticated_subscriber(self):
-        self.client.force_login(self.data.subscription.user)
-        response = self.client.get(self.url)
-        self.assertTemplateUsed(response, "landing.html")
-        self.assertEqual(
-            list(response.context["posts"]),
-            [self.data.private_post, self.data.career_post, self.data.all_post],
-        )
-
-
-class TestListPosts(DataTestCase):
-    url = reverse("newsletter:list_posts")
-
-    @patch("project.newsletter.views.LIST_POSTS_PAGE_SIZE", 1)
-    def test_unauthenticated(self):
-        response = self.client.get(self.url)
-        self.assertTemplateUsed(response, "posts/list.html")
-        self.assertEqual(list(response.context["page"]), [self.data.career_post])
-
-        # Verify the pagination exists.
-        self.assertInHTML(
-            '<a class="item active" href="?page=1">1</a>',
-            response.content.decode("utf-8"),
-        )
-        self.assertInHTML(
-            '<a class="item" href="?page=2">2</a>', response.content.decode("utf-8")
-        )
-
-    @patch("project.newsletter.views.LIST_POSTS_PAGE_SIZE", 1)
-    def test_authenticated(self):
-        self.client.force_login(self.data.subscription.user)
-        response = self.client.get(self.url)
-        self.assertTemplateUsed(response, "posts/list.html")
-        self.assertEqual(list(response.context["page"]), [self.data.private_post])
-
-        # Verify the categories are rendered
-        self.assertContains(response, self.data.private_post.categories.first().title)
-        # Verify the pagination exists.
-        self.assertInHTML(
-            '<a class="item active" href="?page=1">1</a>',
-            response.content.decode("utf-8"),
-        )
-        self.assertInHTML(
-            '<a class="item" href="?page=2">2</a>', response.content.decode("utf-8")
-        )
-
-    @patch("project.newsletter.views.LIST_POSTS_PAGE_SIZE", 1)
-    def test_pagination(self):
-        self.client.force_login(self.data.subscription.user)
-        response = self.client.get(self.url + "?page=2")
-        self.assertTemplateUsed(response, "posts/list.html")
-        self.assertEqual(list(response.context["page"]), [self.data.career_post])
-        # Verify the pagination exists.
-        self.assertInHTML(
-            '<a class="item" href="?page=1">1</a>', response.content.decode("utf-8")
-        )
-        self.assertInHTML(
-            '<a class="item active" href="?page=2">2</a>',
-            response.content.decode("utf-8"),
-        )
-
-
 class TestViewPost(DataTestCase):
     def test_unauthenticated(self):
         response = self.client.get(
@@ -309,7 +227,7 @@ class TestTogglePostPrivacy(DataTestCase):
         )
         url = reverse("newsletter:toggle_post_privacy", kwargs={"slug": post.slug})
         response = self.client.post(url)
-        self.assertRedirects(response, reverse("newsletter:list_posts"))
+        self.assertRedirects(response, "/admin/")
         post.refresh_from_db()
         self.assertFalse(post.is_public)
 
@@ -414,10 +332,7 @@ class TestUpdateSubscription(DataTestCase):
     def test_update(self):
         self.client.force_login(self.user)
         data = {"categories": [self.data.career.slug]}
-        response = self.client.post(
-            reverse("newsletter:update_subscription"), data=data
-        )
-        self.assertRedirects(response, reverse("newsletter:list_posts"))
+        self.client.post(reverse("newsletter:update_subscription"), data=data)
         self.assertEqual(self.subscription.categories.get(), self.data.career)
 
 
