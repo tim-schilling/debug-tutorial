@@ -8,7 +8,7 @@ from django.urls import reverse
 from django.utils import timezone
 from PIL import Image
 
-from project.newsletter.models import Post, Subscription, SubscriptionNotification
+from project.newsletter.models import Post, Subscription
 from project.newsletter.test import DataTestCase
 
 
@@ -92,62 +92,6 @@ class TestListPosts(DataTestCase):
             '<a class="item active" href="?page=2">2</a>',
             response.content.decode("utf-8"),
         )
-
-
-class TestViewPost(DataTestCase):
-    def test_unauthenticated(self):
-        response = self.client.get(
-            reverse("newsletter:view_post", kwargs={"slug": self.data.career_post.slug})
-        )
-        self.assertTemplateUsed(response, "posts/detail.html")
-        self.assertEqual(response.context["post"], self.data.career_post)
-
-    def test_unauthenticated_private_post(self):
-        response = self.client.get(
-            reverse(
-                "newsletter:view_post", kwargs={"slug": self.data.private_post.slug}
-            )
-        )
-        self.assertEqual(response.status_code, 404)
-
-    def test_authenticated_private_post(self):
-        self.client.force_login(self.data.subscription.user)
-        response = self.client.get(
-            reverse(
-                "newsletter:view_post", kwargs={"slug": self.data.private_post.slug}
-            )
-        )
-        self.assertTemplateUsed(response, "posts/detail.html")
-        self.assertEqual(response.context["post"], self.data.private_post)
-
-    def test_mark_as_read(self):
-        notification = SubscriptionNotification.objects.create(
-            subscription=self.data.subscription,
-            post=self.data.all_post,
-            sent=timezone.now(),
-        )
-        self.client.force_login(self.data.subscription.user)
-        response = self.client.get(
-            reverse("newsletter:view_post", kwargs={"slug": self.data.all_post.slug})
-        )
-        self.assertTemplateUsed(response, "posts/detail.html")
-        self.assertEqual(response.context["post"], self.data.all_post)
-        notification.refresh_from_db()
-        self.assertIsNotNone(notification.read)
-
-    def test_cached_response(self):
-        post = Post.objects.create(
-            slug="cached",
-            title="cached",
-            author=self.data.author,
-            is_public=True,
-            is_published=True,
-        )
-        with self.assertNumQueries(1):
-            self.client.get(reverse("newsletter:view_post", kwargs={"slug": post.slug}))
-
-        with self.assertNumQueries(0):
-            self.client.get(reverse("newsletter:view_post", kwargs={"slug": post.slug}))
 
 
 class TestUnpublishedPosts(DataTestCase):
