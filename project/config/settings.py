@@ -161,7 +161,7 @@ EMAIL_BACKEND = "django.core.mail.backends.console.EmailBackend"
 
 # Login URL setting
 LOGIN_URL = reverse_lazy("auth_login")
-LOGIN_REDIRECT_URL = reverse_lazy("newsletter:landing")
+LOGIN_REDIRECT_URL = "/"
 
 # Martor / Markdown editor
 
