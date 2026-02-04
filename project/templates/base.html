@@ -11,18 +11,19 @@
   <header>
     <div class="ui fixed inverted menu">
       <div class="ui container">
-        <a href="#" class="header item">
+        <a href="{% url "newsletter:landing" %}" class="header item">
           Debug Newsletter
         </a>
         {% if not request.user.is_staff %}
-        <a href="#" class="header item">
+          <a href="{% url "newsletter:list_posts" %}" class="header item">
             Posts
-        </a>
+          </a>
         {% else %}
           <div class="ui dropdown item" tabindex="0">
             Posts
             <i class="dropdown icon"></i>
             <div class="menu transition hidden" tabindex="-1">
+              <a href="{% url "newsletter:list_posts" %}" class="item">Published</a>
               <a href="{% url "newsletter:unpublished_posts" %}" class="item">Unpublished</a>
               <div class="divider"></div>
               <a href="{% url "newsletter:create_post" %}" class="item">Create</a>
