@@ -5,6 +5,7 @@ from django.core import validators
 from django.db import models
 from django.db.models import Exists, F, OuterRef
 from django.db.models.functions import Coalesce
+from django.urls import reverse
 from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from martor.models import MartorField
@@ -155,7 +156,7 @@ class Post(TimestampedModel):
         return f"<Post title={self.title} slug={self.slug} is_published={self.is_published} created={self.created} updated={self.updated}>"
 
     def get_absolute_url(self):
-        return f"/p/{self.slug}/"
+        return reverse("newsletter:view_post", kwargs={"lookup": self.slug})
 
     @property
     def publish_date(self):
