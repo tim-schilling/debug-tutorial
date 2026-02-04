@@ -1,5 +1,6 @@
 import os
 import uuid
+from datetime import timedelta
 
 from django.conf import settings
 from django.contrib import messages
@@ -12,13 +13,14 @@ from django.core.paginator import Paginator
 from django.db.models import Case, F, Value, When
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
 from martor.utils import LazyEncoder
 
 from project.newsletter import operations
 from project.newsletter.forms import PostForm, SubscriptionForm
-from project.newsletter.models import Post, Subscription
+from project.newsletter.models import Category, Post, Subscription
 
 LIST_POSTS_PAGE_SIZE = 100
 
@@ -160,6 +162,80 @@ def update_post(request, slug):
             messages.success(request, f"Post '{post.title}' was updated successfully.")
             return redirect("newsletter:update_post", slug=post.slug)
     return render(request, "staff/post_form.html", {"form": form, "post": post})
+
+
+def determine_buckets(instance):
+    """
+    Helper function to determine which buckets should be incremented.
+
+    :param instance: A model instance with ``created`` property.
+    :return: tuple(bool, bool, bool)
+    """
+    now = timezone.now()
+    bound_30_days = now - timedelta(days=30)
+    bound_90_days = now - timedelta(days=90)
+    bound_180_days = now - timedelta(days=180)
+    return (
+        bound_30_days <= instance.created,
+        bound_90_days <= instance.created,
+        bound_180_days <= instance.created,
+    )
+
+
+def analyze_categorized_model(Model, label):
+    """
+    Count the number of instances in the last X days and with a category.
+
+    This can be used with Subscription or Post.
+    """
+    count = 0
+    count_30_days = 0
+    count_90_days = 0
+    count_180_days = 0
+    category_aggregates = {
+        category.title: 0 for category in Category.objects.order_by("title")
+    }
+    for obj in Model.objects.all().prefetch_related("categories"):
+        # Increment category buckets
+        for category in obj.categories.all():
+            category_aggregates[category.title] += 1
+        # Increment our post counts
+        count += 1
+        incr_30, incr_90, incr_180 = determine_buckets(obj)
+        if incr_30:
+            count_30_days += 1
+        if incr_90:
+            count_90_days += 1
+        if incr_180:
+            count_180_days += 1
+    return {
+        label: count,
+        f"{label} (30 days)": count_30_days,
+        f"{label} (90 days)": count_90_days,
+        f"{label} (180 days)": count_180_days,
+    }, category_aggregates
+
+
+@staff_member_required(login_url=settings.LOGIN_URL)
+@require_http_methods(["GET"])
+def analytics(request):
+    """
+    The post detail view.
+    """
+    (
+        subscription_aggregates,
+        subscription_category_aggregates,
+    ) = analyze_categorized_model(Subscription, "Subscriptions")
+    post_aggregates, post_category_aggregates = analyze_categorized_model(Post, "Posts")
+    return render(
+        request,
+        "staff/analytics.html",
+        {
+            "aggregates": {**subscription_aggregates, **post_aggregates},
+            "subscription_category_aggregates": subscription_category_aggregates,
+            "post_category_aggregates": post_category_aggregates,
+        },
+    )
 
 
 @staff_member_required(login_url=settings.LOGIN_URL)

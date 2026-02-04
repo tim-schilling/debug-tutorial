@@ -419,3 +419,81 @@ class TestUpdateSubscription(DataTestCase):
         )
         self.assertRedirects(response, reverse("newsletter:list_posts"))
         self.assertEqual(self.subscription.categories.get(), self.data.career)
+
+
+class TestAnalytics(DataTestCase):
+    def test_basic(self):
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("newsletter:analytics"))
+        self.assertTemplateUsed(response, "staff/analytics.html")
+        self.assertEqual(
+            response.context["aggregates"],
+            {
+                "Subscriptions": 1,
+                "Subscriptions (30 days)": 1,
+                "Subscriptions (90 days)": 1,
+                "Subscriptions (180 days)": 1,
+                "Posts": 3,
+                "Posts (30 days)": 3,
+                "Posts (90 days)": 3,
+                "Posts (180 days)": 3,
+            },
+        )
+
+        self.assertEqual(
+            response.context["subscription_category_aggregates"],
+            {
+                self.data.career.title: 1,
+                self.data.social.title: 1,
+            },
+        )
+        self.assertEqual(
+            response.context["post_category_aggregates"],
+            {
+                self.data.career.title: 2,
+                self.data.social.title: 2,
+            },
+        )
+
+    def test_date_aggregates(self):
+        # Create users that are outside the cut-off points.
+        for days in [31, 91, 181]:
+            user = User.objects.create_user(username=f"days{days}")
+            subscription = Subscription.objects.create(user=user)
+            # We can't specify created in .create() because it's automatically set.
+            Subscription.objects.filter(id=subscription.id).update(
+                created=timezone.now() - timedelta(days=days)
+            )
+            subscription.categories.set([self.data.career, self.data.social])
+
+        self.client.force_login(self.user)
+        response = self.client.get(reverse("newsletter:analytics"))
+        self.assertTemplateUsed(response, "staff/analytics.html")
+        self.assertEqual(
+            response.context["aggregates"],
+            {
+                "Subscriptions": 4,
+                "Subscriptions (30 days)": 1,
+                "Subscriptions (90 days)": 2,
+                "Subscriptions (180 days)": 3,
+                "Posts": 3,
+                "Posts (30 days)": 3,
+                "Posts (90 days)": 3,
+                "Posts (180 days)": 3,
+            },
+        )
+
+        self.assertEqual(
+            response.context["subscription_category_aggregates"],
+            {
+                self.data.career.title: 4,
+                self.data.social.title: 4,
+            },
+        )
+        self.assertEqual(
+            response.context["post_category_aggregates"],
+            {
+                self.data.career.title: 2,
+                self.data.social.title: 2,
+            },
+        )
