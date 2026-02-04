@@ -183,6 +183,8 @@ if DEBUG:  # pragma: no cover
     INSTALLED_APPS += ["debug_toolbar"]
     MIDDLEWARE.insert(0, "debug_toolbar.middleware.DebugToolbarMiddleware")
     INTERNAL_IPS = ["127.0.0.1", "10.0.2.2"]
+    # Crank this way up to gather more calls.
+    DEBUG_TOOLBAR_CONFIG = {"PROFILER_THRESHOLD_RATIO": 75000}
 
 LOGGING = {
     "version": 1,
