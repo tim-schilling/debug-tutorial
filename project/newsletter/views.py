@@ -1,5 +1,6 @@
 import os
 import uuid
+from datetime import timedelta
 
 from django.conf import settings
 from django.contrib import messages
@@ -9,16 +10,17 @@ from django.core.cache import cache
 from django.core.files.base import ContentFile
 from django.core.files.storage import default_storage
 from django.core.paginator import Paginator
-from django.db.models import Case, F, Value, When
+from django.db.models import Case, Count, F, Q, Value, When
 from django.http import Http404, HttpResponse, JsonResponse
 from django.shortcuts import get_object_or_404, redirect, render
+from django.utils import timezone
 from django.utils.translation import gettext_lazy as _
 from django.views.decorators.http import require_http_methods
 from martor.utils import LazyEncoder
 
 from project.newsletter import operations
 from project.newsletter.forms import PostForm, SubscriptionForm
-from project.newsletter.models import Post, Subscription
+from project.newsletter.models import Category, Post, Subscription
 
 LIST_POSTS_PAGE_SIZE = 100
 
@@ -160,6 +162,80 @@ def update_post(request, slug):
             messages.success(request, f"Post '{post.title}' was updated successfully.")
             return redirect("newsletter:update_post", slug=post.slug)
     return render(request, "staff/post_form.html", {"form": form, "post": post})
+
+
+@staff_member_required(login_url=settings.LOGIN_URL)
+@require_http_methods(["GET"])
+def analytics(request):
+    """
+    The post detail view.
+    """
+    now = timezone.now()
+    subscription_aggregates = Subscription.objects.all().aggregate(
+        subscriptions=Count("user", filter=Q(categories__isnull=False)),
+        subscriptions_30_days=Count(
+            "id",
+            filter=Q(categories__isnull=False, created__gte=now - timedelta(days=30)),
+        ),
+        subscriptions_90_days=Count(
+            "id",
+            filter=Q(categories__isnull=False, created__gte=now - timedelta(days=90)),
+        ),
+        subscriptions_180_days=Count(
+            "id",
+            filter=Q(categories__isnull=False, created__gte=now - timedelta(days=180)),
+        ),
+    )
+    subscription_category_aggregates = dict(
+        Category.objects.annotate(count=Count("subscriptions"))
+        .order_by("title")
+        .values_list("title", "count")
+    )
+    post_aggregates = Post.objects.all().aggregate(
+        posts=Count("id"),
+        posts_30_days=Count(
+            "id",
+            filter=Q(created__gte=now - timedelta(days=30)),
+        ),
+        posts_90_days=Count(
+            "id",
+            filter=Q(created__gte=now - timedelta(days=90)),
+        ),
+        posts_180_days=Count(
+            "id",
+            filter=Q(created__gte=now - timedelta(days=180)),
+        ),
+    )
+    post_category_aggregates = dict(
+        Category.objects.annotate(count=Count("posts"))
+        .order_by("title")
+        .values_list("title", "count")
+    )
+
+    return render(
+        request,
+        "staff/analytics.html",
+        {
+            "aggregates": {
+                "Subscriptions": subscription_aggregates["subscriptions"],
+                "Subscriptions (30 days)": subscription_aggregates[
+                    "subscriptions_30_days"
+                ],
+                "Subscriptions (90 days)": subscription_aggregates[
+                    "subscriptions_90_days"
+                ],
+                "Subscriptions (180 days)": subscription_aggregates[
+                    "subscriptions_180_days"
+                ],
+                "Posts": post_aggregates["posts"],
+                "Posts (30 days)": post_aggregates["posts_30_days"],
+                "Posts (90 days)": post_aggregates["posts_90_days"],
+                "Posts (180 days)": post_aggregates["posts_180_days"],
+            },
+            "subscription_category_aggregates": subscription_category_aggregates,
+            "post_category_aggregates": post_category_aggregates,
+        },
+    )
 
 
 @staff_member_required(login_url=settings.LOGIN_URL)
