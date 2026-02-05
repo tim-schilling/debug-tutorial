@@ -7,16 +7,26 @@ from project.newsletter.models import Post
 POST_COUNT = 1500
 
 RECENT_POSTS = [
-    {"title": "Welcome to Our Newsletter", "slug": "welcome-to-our-newsletter"},
-    {"title": "Getting Started with Python", "slug": "getting-started-with-python"},
-    {"title": "Advanced Django Techniques", "slug": "advanced-django-techniques"},
-    {"title": "Database Optimization Tips", "slug": "database-optimization-tips"},
-    {"title": "Testing Best Practices", "slug": "testing-best-practices"},
-    {"title": "Debugging Like a Pro", "slug": "debugging-like-a-pro"},
-    {"title": "Code Review Guidelines", "slug": "code-review-guidelines"},
-    {"title": "Deployment Strategies", "slug": "deployment-strategies"},
-    {"title": "Security Fundamentals", "slug": "security-fundamentals"},
-    {"title": "Performance Monitoring", "slug": "performance-monitoring"},
+    (
+        {"title": "Welcome to Our Newsletter", "slug": "welcome-to-our-newsletter"},
+        {"title": "Getting Started with Python", "slug": "getting-started-with-python"},
+    ),
+    (
+        {"title": "Advanced Django Techniques", "slug": "advanced-django-techniques"},
+        {"title": "Database Optimization Tips", "slug": "database-optimization-tips"},
+    ),
+    (
+        {"title": "Testing Best Practices", "slug": "testing-best-practices"},
+        {"title": "Debugging Like a Pro", "slug": "debugging-like-a-pro"},
+    ),
+    (
+        {"title": "Code Review Guidelines", "slug": "code-review-guidelines"},
+        {"title": "Deployment Strategies", "slug": "deployment-strategies"},
+    ),
+    (
+        {"title": "Security Fundamentals", "slug": "security-fundamentals"},
+        {"title": "Performance Monitoring", "slug": "performance-monitoring"},
+    ),
 ]
 
 
@@ -57,16 +67,30 @@ def generate_data(user, image_category, post_categories):
         ignore_conflicts=True,
     )
 
-    recent_posts = [
-        PostFactory.build(
-            author=user,
-            title=post_data["title"],
-            slug=post_data["slug"],
-            publish_at=DATA_END_DATE - timedelta(days=i),
-            created=DATA_END_DATE - timedelta(days=i),
+    recent_posts = []
+    for day, (first, second) in enumerate(RECENT_POSTS):
+        day_base = DATA_END_DATE - timedelta(days=day)
+        first_time = day_base + timedelta(hours=10)
+        recent_posts.append(
+            PostFactory.build(
+                author=user,
+                title=first["title"],
+                slug=first["slug"],
+                publish_at=first_time - timedelta(hours=2),
+                is_published=True,
+                created=first_time,
+            )
         )
-        for i, post_data in enumerate(RECENT_POSTS)
-    ]
+        recent_posts.append(
+            PostFactory.build(
+                author=user,
+                title=second["title"],
+                slug=second["slug"],
+                created=first_time - timedelta(hours=1),
+                is_published=True,
+                publish_at=None,
+            )
+        )
     Post.objects.bulk_create(recent_posts, ignore_conflicts=True)
 
     category_cycle = cycle(post_categories)

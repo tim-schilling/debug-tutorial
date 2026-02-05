@@ -20,7 +20,9 @@ fake.add_provider(MarkdownPostProvider)
 Faker.seed(2022)
 image_generator = MarkdownImageGenerator()
 
-DATA_END_DATE = timezone.now().replace(hour=0, minute=0, second=0, microsecond=0)
+DATA_END_DATE = timezone.now().replace(
+    hour=0, minute=0, second=0, microsecond=0
+) - timedelta(days=1)
 DATA_START_DATE = DATA_END_DATE - timedelta(days=365 * 2)
 
 
@@ -96,6 +98,9 @@ class PostFactory(factory.django.DjangoModelFactory):
             datetime_end=DATA_END_DATE,
             tzinfo=UTC,
         )
+    )
+    created = factory.LazyAttribute(
+        lambda o: o.publish_at - timedelta(days=fake.pyint(1, 30))
     )
 
     @factory.post_generation

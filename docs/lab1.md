@@ -13,11 +13,11 @@ git checkout lab-1.1
 
 ### Report
 
-The detail view for the post "Term writer recognize race available." is broken.
+The detail view for the post "Welcome to Our Newsletter" is broken.
 
 To reproduce:
 1. Browse to the [posts page](http://127.0.0.1:8000/p/).
-2. Click on "Read" for the post with the title "Term writer recognize race available."
+2. Click on "Read" for the post with the title "Welcome to Our Newsletter"
 3. "It doesn't work!"
 
 ### Facts
@@ -28,7 +28,7 @@ Let's consider what we know:
   QuerySet does not contain a Post matching the filters.
 - The line that causes the error is on line 80:``post = posts.get(title=lookup)``
 - We know the post exists, we can find it in the
-  [admin](http://127.0.0.1:8000/admin/newsletter/post/?q=Term+writer+recognize+race+available.)
+  [admin](http://127.0.0.1:8000/admin/newsletter/post/?q=Welcome+to+Our+Newsletter)
 - This impacts more than just the post in the report. The detail
   view is broken for all posts.
 
@@ -63,7 +63,7 @@ printed the value in the view ``print(lookup)``. From there, we would have had t
 recognize that ``lookup`` wasn't the actual title. This may have required us to compare
 the ``lookup`` value to instance's values in the admin. We can view these values by
 clicking on the instance from our
-[admin search from earlier](http://127.0.0.1:8000/admin/newsletter/post/?q=Term+writer+recognize+race+available.).
+[admin search from earlier](http://127.0.0.1:8000/admin/newsletter/post/?q=Welcome+to+Our+Newsletter).
 
 </details>
 
@@ -230,11 +230,9 @@ order of most recent to oldest, but they appear jumbled.
 
 To reproduce:
 1. Browse to the [list posts](http://127.0.0.1:8000/p/) view.
-2. The dates are ordered from most recent to oldest, but posts such as
-   "Campaign expect page information wrong more." and "Example
-   become begin wish painting economic."
-   appear out of order in comparison to "Skill fight girl north
-   production thus a." and "New star by chair environmental family Congress degree."
+2. The dates are ordered from most recent to oldest, but the post
+   "Getting Started with Python"
+   appears out of order in comparison to "Welcome to Our Newsletter"
 3. "It doesn't work!"
 
 ### Facts
@@ -290,8 +288,8 @@ This is root problem since the collection of posts are actually ordered based on
 The posts are being ordered correctly, ``publish_at`` first, falling back to
 ``created`` when unset. Therefore the template must be rendering incorrectly.
 This can be confirmed by comparing the fields of the posts that render
-[correctly](http://127.0.0.1:8000/admin/newsletter/post/?slug=hear-after-debate-thousand-medical-give-85694)
-and [incorrectly](http://127.0.0.1:8000/admin/newsletter/post/?slug=add-they-debate-guess-leg-21809).
+[correctly](http://127.0.0.1:8000/admin/newsletter/post/?slug=getting-started-with-python)
+and [incorrectly](http://127.0.0.1:8000/admin/newsletter/post/?slug=welcome-to-our-newsletter).
 From the admin, we can see the correctly rendering Post does not have a value
 for ``publish_at``, while the incorrectly rendering Post does have a value
 for ``publish_at``. We can see that the ``publish_at`` value is significantly

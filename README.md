@@ -127,7 +127,7 @@ please scroll down to [Windows non-WSL Setup](#windows-non-wsl-setup).
 10. Verify the following pages load:
     * http://127.0.0.1:8000/
     * http://127.0.0.1:8000/p/
-    * http://127.0.0.1:8000/p/term-writer-recognize-race-available-5291/
+    * http://127.0.0.1:8000/p/welcome-to-our-newsletter/
 11. Log into the admin ([link](http://127.0.0.1:8000/admin/)) with your superuser.
 12. Verify the following pages load:
     * http://127.0.0.1:8000/post/create/
@@ -183,7 +183,7 @@ Proceed to [Lab 1](docs/lab1.md).
 10. Verify the following pages load:
     * http://127.0.0.1:8000/
     * http://127.0.0.1:8000/p/
-    * http://127.0.0.1:8000/p/term-writer-recognize-race-available-5291/
+    * http://127.0.0.1:8000/p/welcome-to-our-newsletter/
 11. Log into the admin ([link](http://127.0.0.1:8000/admin/)) with your superuser.
 12. Verify the following pages load:
     * http://127.0.0.1:8000/post/create/

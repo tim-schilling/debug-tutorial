@@ -17,7 +17,7 @@ The site seems to be running slower lately. Please make the site fast again!
 
 To reproduce:
 1. Browse to the [posts page](http://127.0.0.1:8000/p/).
-2. Browse to a [post's page](http://127.0.0.1:8000/p/term-writer-recognize-race-available-5291/).
+2. Browse to a [post's page](http://127.0.0.1:8000/p/welcome-to-our-newsletter/).
 3. Browse to the [posts admin page](http://127.0.0.1:8000/admin/newsletter/post/).
 4. Why are these slow?
 
@@ -70,7 +70,7 @@ that ``Post.categories`` is a ``ManyToManyField``, we'll need to use ``.prefetch
 Since the categories need to be specifically ordered, you'll need to use a
 [``Prefetch``](https://docs.djangoproject.com/en/stable/ref/models/querysets/#django.db.models.Prefetch) instance rather than just a string.
 
-Moving onto an individual [post page](http://127.0.0.1:8000/p/term-writer-recognize-race-available-5291/),
+Moving onto an individual [post page](http://127.0.0.1:8000/p/welcome-to-our-newsletter/),
 the SQL panel only shows 1 query. Clicking into that panel, we'll see some really low value,
 like 5ms. This in pretty much every definition is fast. However, let's trust the reporter
 that this is actually slow. The next step is to understand what about this query is
