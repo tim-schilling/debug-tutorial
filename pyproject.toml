@@ -15,6 +15,7 @@ dependencies = [
     "django-debug-toolbar",
     "django-environ",
     "django-registration-redux",
+    "factory_boy",
     "faker",
     "martor",
     "mdgen",

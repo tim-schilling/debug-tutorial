@@ -1,74 +1,30 @@
-from datetime import UTC, datetime
+from datetime import timedelta
 from itertools import cycle
 
-from faker import Faker
-from faker.utils.text import slugify
-from mdgen import MarkdownPostProvider
-from mdgen.core import MarkdownImageGenerator
-
+from project.data.factories import DATA_END_DATE, ImagePostFactory, PostFactory
 from project.newsletter.models import Post
 
-fake = Faker()
-fake.add_provider(MarkdownPostProvider)
-# Seed the randomization to support consistent randomization.
-Faker.seed(2022)
-image_generator = MarkdownImageGenerator()
+POST_COUNT = 1500
 
-
-def header(level=1):
-    lead = "#" * level
-    return lead + fake.sentence()
-
-
-def short_photo_update():
-    return "\n\n".join(
-        [
-            header(level=1),
-            fake.paragraph(),
-            image_generator.new_image(
-                fake.sentence(),
-                f"https://picsum.photos/{fake.pyint(200, 500)}",
-                fake.text(),
-            ),
-            fake.paragraph(),
-        ]
-    )
+RECENT_POSTS = [
+    {"title": "Welcome to Our Newsletter", "slug": "welcome-to-our-newsletter"},
+    {"title": "Getting Started with Python", "slug": "getting-started-with-python"},
+    {"title": "Advanced Django Techniques", "slug": "advanced-django-techniques"},
+    {"title": "Database Optimization Tips", "slug": "database-optimization-tips"},
+    {"title": "Testing Best Practices", "slug": "testing-best-practices"},
+    {"title": "Debugging Like a Pro", "slug": "debugging-like-a-pro"},
+    {"title": "Code Review Guidelines", "slug": "code-review-guidelines"},
+    {"title": "Deployment Strategies", "slug": "deployment-strategies"},
+    {"title": "Security Fundamentals", "slug": "security-fundamentals"},
+    {"title": "Performance Monitoring", "slug": "performance-monitoring"},
+]
 
 
 def generate_data(user, image_category, post_categories):
-    image_posts = []
-    for i in range(1500):
-        title = fake.sentence()
-        slug = slugify(title) + f"-{fake.pyint(10, 99999)}"
-        publish_at = (
-            fake.date_time_between_dates(
-                datetime_start=datetime(2020, 1, 1, tzinfo=UTC),
-                datetime_end=datetime(2022, 10, 12, tzinfo=UTC),
-                tzinfo=UTC,
-            )
-            if fake.pybool()
-            else None
-        )
-        created = fake.date_time_between_dates(
-            datetime_start=datetime(2020, 1, 1, tzinfo=UTC),
-            datetime_end=datetime(2022, 10, 12, tzinfo=UTC),
-            tzinfo=UTC,
-        )
-        if publish_at and publish_at < created:
-            created = publish_at
-        image_posts.append(
-            Post(
-                created=created,
-                author=user,
-                title=title,
-                slug=slug,
-                summary=fake.paragraph(),
-                content=short_photo_update(),
-                is_public=True,
-                is_published=True,
-                publish_at=publish_at,
-            )
-        )
+    image_posts = ImagePostFactory.build_batch(
+        POST_COUNT,
+        author=user,
+    )
     Post.objects.bulk_create(image_posts, batch_size=500, ignore_conflicts=True)
 
     category_through = Post.categories.through
@@ -83,39 +39,10 @@ def generate_data(user, image_category, post_categories):
         ignore_conflicts=True,
     )
 
-    general_posts = []
-    for i in range(1500):
-        title = fake.sentence()
-        slug = slugify(title) + f"-{fake.pyint(10, 9999)}"
-        publish_at = (
-            fake.date_time_between_dates(
-                datetime_start=datetime(2020, 1, 1, tzinfo=UTC),
-                datetime_end=datetime(2022, 10, 12, tzinfo=UTC),
-                tzinfo=UTC,
-            )
-            if fake.pybool()
-            else None
-        )
-        created = fake.date_time_between_dates(
-            datetime_start=datetime(2020, 1, 1, tzinfo=UTC),
-            datetime_end=datetime(2022, 10, 12, tzinfo=UTC),
-            tzinfo=UTC,
-        )
-        if publish_at and publish_at < created:
-            created = publish_at
-        general_posts.append(
-            Post(
-                created=created,
-                author=user,
-                title=title,
-                slug=slug,
-                summary=fake.paragraph(),
-                content=fake.post("medium"),
-                is_public=True,
-                is_published=True,
-                publish_at=publish_at,
-            )
-        )
+    general_posts = PostFactory.build_batch(
+        POST_COUNT,
+        author=user,
+    )
     Post.objects.bulk_create(general_posts, batch_size=500, ignore_conflicts=True)
 
     category_cycle = cycle(post_categories)
@@ -127,5 +54,26 @@ def generate_data(user, image_category, post_categories):
             )
         ],
         batch_size=500,
+        ignore_conflicts=True,
+    )
+
+    recent_posts = [
+        PostFactory.build(
+            author=user,
+            title=post_data["title"],
+            slug=post_data["slug"],
+            publish_at=DATA_END_DATE - timedelta(days=i),
+            created=DATA_END_DATE - timedelta(days=i),
+        )
+        for i, post_data in enumerate(RECENT_POSTS)
+    ]
+    Post.objects.bulk_create(recent_posts, ignore_conflicts=True)
+
+    category_cycle = cycle(post_categories)
+    category_through.objects.bulk_create(
+        [
+            category_through(category_id=next(category_cycle).id, post_id=post.id)
+            for post in recent_posts
+        ],
         ignore_conflicts=True,
     )

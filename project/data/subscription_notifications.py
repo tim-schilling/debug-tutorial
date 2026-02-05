@@ -1,5 +1,6 @@
 from django.db.models import F
 
+from project.data.factories import SubscriptionNotificationFactory
 from project.newsletter.models import Post, Subscription, SubscriptionNotification
 
 
@@ -16,14 +17,21 @@ def generate_data():
         .distinct()
     )
 
-    SubscriptionNotification.objects.bulk_create(
-        [
-            SubscriptionNotification(post=post, subscription_id=id, sent=date)
-            for id in subscriber_ids
-            for post in posts
-        ],
-        batch_size=10000,
-    )
+    notifications = []
+    for subscription_id in subscriber_ids:
+        for post in posts:
+            if not SubscriptionNotification.objects.filter(
+                post=post, subscription_id=subscription_id
+            ).exists():
+                notifications.append(
+                    SubscriptionNotificationFactory.build(
+                        post=post,
+                        subscription_id=subscription_id,
+                        sent=date,
+                    )
+                )
+
+    SubscriptionNotification.objects.bulk_create(notifications, batch_size=10000)
     SubscriptionNotification.objects.filter(post__in=posts).update(
         created=F("sent"),
         updated=F("sent"),
