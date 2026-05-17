@@ -89,7 +89,7 @@ please scroll down to [Windows non-WSL Setup](#windows-non-wsl-setup).
    ```shell
    python -m venv venv
    ```
-2. Active the virtual environment.
+2. Activate the virtual environment.
    ```shell
    source venv/bin/activate
    ```
