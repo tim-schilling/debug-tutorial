@@ -143,7 +143,7 @@ Proceed to [Lab 1](docs/lab1.md).
 
 1. From the command prompt, create a virtual environment.
    ```shell
-   python3 -m venv venv
+   python -m venv venv
    ```
 2. Activate the project
    ```shell

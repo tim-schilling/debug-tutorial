@@ -124,7 +124,7 @@ def categories_list(self, obj):
 ```
 
 
-There should also be an indexes on
+There should also be an index on
 ``created``. Arguments could be made to add indexes on the fields that are
 search-able and ``is_published``. I would stop at ``created`` because that's used
 on the default loading. Any other cases would need to be proven as common
@@ -346,13 +346,13 @@ inflated count.
 This can be fixed by using an appropriate ``GROUP BY`` clause in the SQL. To use this
 in the ORM, we can either inspect the code or use the docs to see what options Django
 ORM's``Count`` provides us. You can use the [docs](https://docs.djangoproject.com/en/stable/ref/models/querysets/#id9)
-or inspect [the code](https://github.com/django/django/blob/stable/5.2.x/django/db/models/aggregates.py#L168-L173)
+or inspect [the code](https://github.com/search?q=repo%3Adjango%2Fdjango+class+Count%28Aggregate%29%3A&type=code)
 (right-click on ``Count`` and choose "Go To Definition") in your IDE if you're using
 PyCharm or VSCode.
 
 We can see that ``Count`` subclasses
-[``Aggregate`` which has ``distinct`` as a param](https://github.com/django/django/blob/stable/5.2.x/django/db/models/aggregates.py#L26-L37).
-This matches [the documentation](https://docs.djangoproject.com/en/5.2/ref/models/querysets/#django.db.models.Count.distinct) as well.
+[``Aggregate`` which has ``distinct`` as a param](https://github.com/search?q=repo%3Adjango%2Fdjango+class+Aggregate%28Func%29%3A&type=code).
+This matches [the documentation](https://docs.djangoproject.com/en/stable/ref/models/querysets/#django.db.models.Count.distinct) as well.
 
 </details>
 
@@ -470,8 +470,8 @@ Another would be to avoid using ``.update()``, but only change the public
 field via:
 
 ```python
-post = get_objects_or_404(...)
-post.is_public != post.is_public
+post = get_object_or_404(...)
+post.is_public = not post.is_public
 # Include updated to keep our updated timestamp fresh.
 post.save(update_fields=['is_public', 'updated'])
 ```

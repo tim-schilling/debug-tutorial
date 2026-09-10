@@ -26,7 +26,7 @@ Let's consider what we know:
 
 - The error message is ``Post matching query does not exist.``, implying the
   QuerySet does not contain a Post matching the filters.
-- The line that causes the error is on line 80:``post = posts.get(title=lookup)``
+- The line that causes the error is in ``newsletter/views.py`` on line 80: ``post = posts.get(title=lookup)``
 - We know the post exists, we can find it in the
   [admin](http://127.0.0.1:8000/admin/newsletter/post/?q=Welcome+to+Our+Newsletter)
 - This impacts more than just the post in the report. The detail
@@ -273,7 +273,7 @@ Let's start with searching the code base for existing piece of HTML. Using the B
 
 We can assume that the date specific information is going to be in some type of template filter or template tag. So let's try searching our codebase for ``left floated six wide column``. This should have two code matches. One of which will have a child element with the text "Read More", and since that doesn't appear in our HTML, we can exclude it. This leaves us with the template ``projects/templates/posts/includes/list_item.html``. From our search result, we can see that the template tag ``{% nice_datetime ... %}`` is rendering the timestamp.
 
-If we wanted to try from the other approach, we'd start by looking at ``project/templates/posts/list.html``. We can see a loop over
+If we wanted to try from the other approach, we'd start by looking at ``project/templates/posts/list.html``. We can see a loop over ``page``
 to render individual elements for posts on the page, ``{% for post in page %}``.
 This brings us to the template ``projects/templates/posts/includes/list_item.html``. From there, we'd need to compare the rendered HTML to the template to narrow it down to the template tag ``{% nice_datetime ... %}``.
 
